@@ -34,6 +34,7 @@ interface InputProps extends
     details?: string; // Details to be displayed below the input
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
+    register?: object; // register in react hook form
 }
 
 /**
@@ -43,16 +44,18 @@ interface InputProps extends
  * @param stretched - Whether the input should stretch to fill its container.
  * @param details - Details to be displayed below the input.
  * @param error - Error message to be displayed below the input.
+ * @param register - register in react hook form
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-const Input: FC<InputProps> = ({className, theme, stretched=false, details, error,...props}) => {
+const Input: FC<InputProps> = ({className, theme, stretched=false, register, details, error,...props}) => {
     return (
         <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
             {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
             <input 
                 className={cn(inputVariants({className, theme}))}
                 {...props} 
+                {...register}
             />
             {error && <p className="text-red-500 text-sm font-light">{error}</p>}
         </div>

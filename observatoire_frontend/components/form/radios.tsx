@@ -35,6 +35,7 @@ interface RadiosProps extends
     options: {label: string, value: string}[];
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
+    register?: object; // register in react hook form
 }
 
 /**
@@ -44,10 +45,11 @@ interface RadiosProps extends
  * @param stretched - Whether the input should stretch to fill its container.
  * @param details - Details to be displayed below the input.
  * @param error - Error message to be displayed below the input.
+ * @param register - register in react hook form
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-const Radios: FC<RadiosProps> = ({className, theme, stretched=false, options, details, error, id, ...props}) => {
+const Radios: FC<RadiosProps> = ({className, theme, stretched=false, register, options, details, error, id, ...props}) => {
     return (
         <div className={`flex flex-col justify-start gap-2 ${stretched ? "w-full": "w-fit"}`}>
             {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
@@ -58,7 +60,7 @@ const Radios: FC<RadiosProps> = ({className, theme, stretched=false, options, de
                             className={`${theme == "theme1" ? "text-[#FC9C64]": theme == "theme2" ? "text-white": "text-black"} cursor-pointer flex flex-row gap-2 justify-center items-center`}
                             htmlFor={option.value}
                         >
-                            <input type="radio" id={option.value} value={option.value} name={id} className="peer sr-only" {...props}></input>
+                            <input type="radio" id={option.value} value={option.value} name={id} className="peer sr-only" {...props} {...register}></input>
                             <div className={cn(radiosVariants({className, theme}))}></div>
                             {option.label}
                         </label>

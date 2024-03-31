@@ -54,7 +54,7 @@ const Select: FC<SelectProps> = ({className, theme, options, details, error, str
     return <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
         {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
         <select className={cn(selectVariants({className, theme}))} {...props}>
-            <option value="" disabled hidden className="text-black">{placeholder}</option>
+            <option selected value="" className="text-black">{placeholder}</option>
             {
                 options.map((option) => (
                     <option value={option.value} key={option.value} className="text-black">

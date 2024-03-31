@@ -1,27 +1,38 @@
-import { FC, useState } from 'react';
+import { AllHTMLAttributes, FC, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from "@/lib/utils"; 
+
+const avatarVariants = cva(
+    "flex flex-row gap-1 justify-center items-center relative text-white",
+)
 
 /**
  * Props for the Avatar component.
  */
-interface AvatarProps {
+interface AvatarProps extends  
+    AllHTMLAttributes<HTMLAllCollection>,
+    VariantProps<typeof avatarVariants> 
+{
     name: string; // The name to display in the avatar
     image_link?: string; // Optional link to the avatar image
 }
 
 /**
  * Avatar component for displaying user avatars with dropdown functionality.
+ * 
  * @param name - The name to display in the avatar.
  * @param image_link - Optional link to the avatar image.
+ * @param className - Additional CSS classes to apply to the component.
  * @returns A React Functional Component representing an avatar.
  */
-const Avatar: FC<AvatarProps> = ({name, image_link}) => {
+const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
     // State to manage whether the dropdown menu is visible or not
     const [showDropDown, setShowDropDown] = useState(false);
 
     return (
-        <div className="flex flex-row gap-1 justify-center items-center relative text-white">
+        <div className={cn(avatarVariants({className}))}>
             {/* Display name */}
             <h2 className="capitalize mr-2 cursor-pointer" onClick={() => setShowDropDown((lastValue) => !lastValue)}>{name}</h2>       
             

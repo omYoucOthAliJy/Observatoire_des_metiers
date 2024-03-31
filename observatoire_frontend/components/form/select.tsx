@@ -36,6 +36,7 @@ interface SelectProps extends
     stretched?: boolean; // Whether the select should stretch to fill its container
     options: {label: string, value: string}[]; // Options for the select dropdown
     placeholder: string; // Placeholder text for the select
+    register?: object; // register in react hook form
 }
 
 /**
@@ -47,13 +48,14 @@ interface SelectProps extends
  * @param error - Error message to be displayed below the select.
  * @param stretched - Whether the select should stretch to fill its container.
  * @param placeholder - Placeholder text for the select.
+ * @param register - register in react hook form
  * @param props - Additional HTML select attributes.
  * @returns A React Functional Component representing a customizable select field.
  */
-const Select: FC<SelectProps> = ({className, theme, options, details, error, stretched=false, placeholder, ...props}) => {
+const Select: FC<SelectProps> = ({className, theme, options, register, details, error, stretched=false, placeholder, ...props}) => {
     return <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
         {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
-        <select className={cn(selectVariants({className, theme}))} {...props}>
+        <select className={cn(selectVariants({className, theme}))} {...props} {...register}>
             <option selected value="" className="text-black">{placeholder}</option>
             {
                 options.map((option) => (

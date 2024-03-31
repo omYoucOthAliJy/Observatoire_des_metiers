@@ -56,7 +56,6 @@ export class CSVParserService implements ParserService {
                         lastInscription: data["Derniere_inscription"],
                     }
                     if (!isUserEntry(userObject, specialities, formations)) {
-                        console.log("here error", userObject)
                         const errorMessage = `Invalid element at csv file: ${JSON.stringify(userObject)}`;
                         stream.destroy(new Error(errorMessage));
                     } else {

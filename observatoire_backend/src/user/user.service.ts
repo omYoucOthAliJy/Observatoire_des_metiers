@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 //import { User } from './schema/user.schema';
 import{InjectRepository} from '@nestjs/typeorm';
 import{ILike, Repository} from 'typeorm';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 
 
 import { identity } from 'rxjs';
@@ -52,6 +52,55 @@ export class UserService {
           throw error; 
         }
       }
+
+      async findAllByFirstLetter(fletter: string): Promise<User[]> {
+        try {
+            // Normalization de la formation, en minuscules
+            const normalized= fletter
+                ? fletter
+                    .toLowerCase()
+                : '';
+    
+            // Recherche des utilisateurs par formation
+            const users = await this.userRepository.createQueryBuilder("user")
+                .where("SUBSTRING(user.name, 1, 1) = :firstLetter", { firstLetter: normalized.charAt(0) })
+                .getMany();
+    
+            return users;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findAllByNameStartingWith(startingWith: string): Promise<User[]> {
+      try {
+          // Normalisation de la sous-chaîne, en minuscules
+          const normalizedStartingWith = startingWith ? startingWith.toLowerCase() : '';
+
+          // Recherche des utilisateurs dont le nom commence par la sous-chaîne spécifiée
+          const users = await this.userRepository.createQueryBuilder("user")
+              .where("LOWER(user.name) LIKE :startingWith", { startingWith: `${normalizedStartingWith}%` })
+              .getMany();
+
+          return users;
+      } catch (error) {
+          throw error;
+      }
+  }
+
+  async findAllByDateDiplome(dateDiplome: string): Promise<User[]> {
+    try {
+        // Recherche des utilisateurs par date de diplôme
+        const users = await this.userRepository.createQueryBuilder("user")
+            .where("user.date_diplome = :dateDiplome", { dateDiplome })
+            .getMany();
+
+        return users;
+    } catch (error) {
+        throw error;
+    }
+}
+
     
 
     async create(user: CreateUserDto): Promise <User> {

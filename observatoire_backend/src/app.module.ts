@@ -5,7 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import { User } from './user/user.entity';
+import { User } from './user/entity/user.entity';
 
 
 

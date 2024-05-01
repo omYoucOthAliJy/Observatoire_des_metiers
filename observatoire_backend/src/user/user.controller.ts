@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import {Query as ExpressQuery} from 'express-serve-static-core';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
     constructor(private userService: UserService) {}
  
@@ -22,6 +22,21 @@ async getUsersByFormation(@Query('formation') formation: string): Promise<User[]
     }
     return this.userService.findAllByFormation(formation);
 }
+@Get('fletter')
+async findAllByFirstLetter( @Query('letter') fletter: string): Promise<User[]> {
+
+    return this.userService.findAllByFirstLetter(fletter);
+}
+
+@Get('startsWith')
+    async findAllByNameStartingWith(@Query('startingWith') startingWith: string): Promise<User[]> {
+        return this.userService.findAllByNameStartingWith(startingWith);
+    }
+
+    @Get('byDateDiplome')
+    async findAllByDateDiplome(@Query('dateDiplome') dateDiplome: string): Promise<User[]> {
+        return this.userService.findAllByDateDiplome(dateDiplome);
+    }
 
 @Post()
 async createUser(@Body() user: CreateUserDto): Promise<User> {

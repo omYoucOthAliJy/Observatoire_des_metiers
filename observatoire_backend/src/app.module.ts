@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 
 
@@ -30,6 +32,7 @@ import { User } from './user/entity/user.entity';
   inject: [ConfigService],
 }),
     UserModule,
+    AuthModule,
     ],
   controllers: [AppController],
   providers: [AppService],

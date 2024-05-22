@@ -22,15 +22,15 @@ const Header: FC<HeaderProps> = ({ user }) => {
     return (
         <>
             {/* Header */}
-            <header className='flex flex-row justify-between items-center w-full bg-[#FC9C64] py-2 px-4'>
+            <header className='flex flex-row justify-between items-center w-full bg-[#FC9C64] py-2 px-4 sticky top-0'>
                 {/* Menu icon */}
                 <Image
                     className='h-full sm:hidden cursor-pointer'
-                    src="menu.svg" alt='menu logo' width="40" height="40"
+                    src="/images/menu.svg" alt='menu logo' width="40" height="40"
                     onClick={() => setShowMenu((lastState) => !lastState)}
                 />
                 {/* Logo */}
-                <Image className='h-full' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
+                <Image className='h-full' src="/images/sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
                 {/* Avatar */}
                 <Avatar className='hidden sm:flex' name={user.name} image_link={user.avatar} />
             </header>
@@ -55,7 +55,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                                         <div
                                             className="w-14 h-14 rounded-full bg-white cursor-pointer flex flex-col justify-center items-center p-1 overflow-hidden"
                                         >
-                                            <Image src="profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20" />
+                                            <Image src="/images/profile_image.svg" className="w-[80%] h-[80%]" alt="user avatar" width="20" height="20" />
                                         </div>
                                     }
                                     {/* User name */}
@@ -64,7 +64,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                                 {/* Close Menu icon */}
                                 <Image
                                     className='h-fullcursor-pointer'
-                                    src="close_menu.svg" alt='menu logo' width="30" height="30"
+                                    src="/images/close_menu.svg" alt='menu logo' width="30" height="30"
                                     onClick={() => setShowMenu((lastState) => !lastState)}
                                 />
                             </div>

@@ -51,15 +51,15 @@ const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
                     className="w-14 h-14 rounded-full bg-white cursor-pointer flex flex-col justify-center items-center p-1 overflow-hidden"
                     onClick={() => setShowDropDown((lastValue) => !lastValue)}
                 > 
-                    <Image src="profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20"/> 
+                    <Image src="/images/profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20"/> 
                 </div>
             }
 
             {/* Display dropdown arrow */}
             {showDropDown ? 
-                <Image src="up-arrow.svg" alt="up arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
+                <Image src="/images/up-arrow.svg" alt="up arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
                 :
-                <Image src="down-arrow.svg" alt="down arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
+                <Image src="/images/down-arrow.svg" alt="down arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
             }
             
             {/* Display dropdown menu */}

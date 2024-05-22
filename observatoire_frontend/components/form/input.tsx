@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"; 
 import { VariantProps, cva } from "class-variance-authority"; 
-import { FC, InputHTMLAttributes } from "react"; 
+import React, { FC, InputHTMLAttributes, ReactElement } from "react"; 
 
 /**
  * Define input variants using class-variance-authority.
@@ -31,7 +31,7 @@ interface InputProps extends
     InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof inputVariants>
 {
-    details?: string; // Details to be displayed below the input
+    details?: ReactElement | string; // Details to be displayed below the input
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
 }
@@ -46,17 +46,18 @@ interface InputProps extends
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-const Input: FC<InputProps> = ({className, theme, stretched=false, details, error,...props}) => {
+function Input({className, theme, stretched=false, details, error,...props}: InputProps, ref: any)  {
     return (
         <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
             {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
             <input 
                 className={cn(inputVariants({className, theme}))}
                 {...props} 
+                ref={ref}
             />
             {error && <p className="text-red-500 text-sm font-light">{error}</p>}
         </div>
     );
 }
 
-export default Input; // Export the Input component
+export default React.forwardRef(Input); // Export the Input component

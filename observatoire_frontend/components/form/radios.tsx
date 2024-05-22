@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"; 
 import { VariantProps, cva } from "class-variance-authority"; 
-import { FC, InputHTMLAttributes } from "react"; 
+import React, { FC, InputHTMLAttributes } from "react"; 
 
 /**
  * Define input variants using class-variance-authority.
@@ -47,18 +47,18 @@ interface RadiosProps extends
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-const Radios: FC<RadiosProps> = ({className, theme, stretched=false, options, details, error, id, ...props}) => {
+function Radios({className, theme, stretched=false, options, details, error, id, ...props}: RadiosProps, ref: any) {
     return (
         <div className={`flex flex-col justify-start gap-2 ${stretched ? "w-full": "w-fit"}`}>
             {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
             <div className="flex flex-wrap gap-4">
                 {options.map((option) => (
-                    <div className="w-fit">
+                    <div className="w-fit" key={option.value}>
                         <label 
                             className={`${theme == "theme1" ? "text-[#FC9C64]": theme == "theme2" ? "text-white": "text-black"} cursor-pointer flex flex-row gap-2 justify-center items-center`}
                             htmlFor={option.value}
                         >
-                            <input type="radio" id={option.value} value={option.value} name={id} className="peer sr-only" {...props}></input>
+                            <input type="radio" id={option.value} value={option.value} name={id} className="peer sr-only" {...props} ref={ref}></input>
                             <div className={cn(radiosVariants({className, theme}))}></div>
                             {option.label}
                         </label>
@@ -70,4 +70,4 @@ const Radios: FC<RadiosProps> = ({className, theme, stretched=false, options, de
     );
 }
 
-export default Radios; // Export the Input component
+export default React.forwardRef(Radios); // Export the Input component

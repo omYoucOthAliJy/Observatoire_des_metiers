@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {  IsOptional, IsString } from 'class-validator';
 import { Formation } from '../entity/formation.entity';
 import { Speciality } from '../entity/speciality.entity';
 import { Question } from '../entity/question.entity';

@@ -16,6 +16,10 @@ import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { RolesGuard } from './roles/role.guard';
 import { GetUsersDto } from './dto/get-user-dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+
 
 // @UseGuards(RolesGuard)
 @Controller('users')
@@ -97,4 +101,26 @@ export class UserController {
   async deleteUser(@Param('id') id: number): Promise<string> {
     return this.userService.deleteById(id);
   }
+
+
+
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const ext = path.extname(file.originalname);
+          const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
+          cb(null, filename);
+        },
+      }),
+    }),
+  )
+  async uploadCsv(@UploadedFile() file: Express.Multer.File): Promise<any> {
+    await this.userService.uploadCsv(file.path);
+    return { message: 'File processed successfully' };
+  }
+
 }

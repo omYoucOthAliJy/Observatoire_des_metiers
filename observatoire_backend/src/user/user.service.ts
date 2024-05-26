@@ -13,6 +13,9 @@ import { identity } from 'rxjs';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUsersDto } from './dto/get-user-dto';
 
+import * as csv from 'csv-parser';
+import * as fs from 'fs';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -208,4 +211,34 @@ export class UserService {
       throw error;
     }
   }
+
+
+  async uploadCsv(filePath: string): Promise<void> {
+    const results = [];
+
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', resolve)
+        .on('error', reject);
+    });
+
+    for (const record of results) {
+      const user = new User();
+      user.name = record.prenom;
+      user.gender = record.civilite === 'M' ? 'Male' : 'Female';
+      user.email = record.mailPerso;
+      user.last_name = record.nom;
+      user.birthday = record.dateNaiss;
+      user.formation = record.specialite;
+      user.date_diplome = record.Anne_Obtention;
+      user.description = record.Derniere_Inscription;
+
+      await this.userRepository.save(user);
+    }
+
+    fs.unlinkSync(filePath); // Clean up uploaded file
+  }
+
 }

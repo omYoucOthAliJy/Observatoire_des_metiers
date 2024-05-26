@@ -9,6 +9,16 @@ export class User {
   @IsNotEmpty()
   @IsString()
   @Column()
+  email:string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Column()
+  gender:string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Column()
   name: string;
 
   @IsNotEmpty()

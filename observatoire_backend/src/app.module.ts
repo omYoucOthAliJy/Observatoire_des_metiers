@@ -56,6 +56,9 @@ import { join } from 'path';
       }),
       inject: [ConfigService],
     }),
+    MulterModule.register({
+      dest: './uploads',
+    }),
     UserModule,
     AuthModule,
     AdminModule,

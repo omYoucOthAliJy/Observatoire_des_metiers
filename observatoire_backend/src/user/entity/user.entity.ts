@@ -7,13 +7,13 @@ import { Speciality } from './speciality.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column({
-    type: "varchar",
-    nullable: true,
-  })
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
+  
+    @Column({
+      type: "varchar",
+      nullable: true,
+    })
   email:string;
 
   @Column({

@@ -4,6 +4,14 @@ export class UpdateUserDto {
   @IsOptional()
   readonly id: number;
 
+  @IsNotEmpty()
+  @IsString()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  gender: string;
+
   @IsOptional()
   @IsString()
   readonly name: string;

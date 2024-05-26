@@ -9,6 +9,8 @@ import {
   Query,
   BadRequestException,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schema/user.schema';
@@ -19,7 +21,6 @@ import { GetUsersDto } from './dto/get-user-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
-
 
 // @UseGuards(RolesGuard)
 @Controller('users')
@@ -102,25 +103,31 @@ export class UserController {
     return this.userService.deleteById(id);
   }
 
-
-
-
+  // @Post('upload')
+  // @UseInterceptors(
+  //   FileInterceptor('file', {
+  //     storage: diskStorage({
+  //       destination: './user/csv_file',
+  //       filename: (req, file, cb) => {
+  //         const ext = path.extname(file.originalname);
+  //         const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
+  //         cb(null, filename);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // async uploadCsv(@UploadedFile() file: any): Promise<any> {
+  //   await this.userService.uploadCsv(file.path);
+  //   return { message: 'File processed successfully' };
+  // }
   @Post('upload')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
-          cb(null, filename);
-        },
-      }),
-    }),
-  )
-  async uploadCsv(@UploadedFile() file: Express.Multer.File): Promise<any> {
-    await this.userService.uploadCsv(file.path);
-    return { message: 'File processed successfully' };
+  async uploadCsv(): Promise<any> {
+    try {
+      const filePath = './csv_file/user.csv'; // Chemin local du fichier CSV
+      await this.userService.uploadCsv(filePath);
+      return { message: 'File processed successfully' };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
-
 }

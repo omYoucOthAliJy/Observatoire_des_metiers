@@ -21,7 +21,7 @@ export class CreateUserDto {
   @IsString()
   readonly date_diplome: string;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   @IsString()
   readonly description: string;
 }

@@ -9,12 +9,12 @@ export class User {
   @IsNotEmpty()
   @IsString()
   @Column()
-  email:string;
+  email: string;
 
   @IsNotEmpty()
   @IsString()
   @Column()
-  gender:string;
+  gender: string;
 
   @IsNotEmpty()
   @IsString()
@@ -41,8 +41,8 @@ export class User {
   @Column()
   date_diplome: string;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   description: string;
 }

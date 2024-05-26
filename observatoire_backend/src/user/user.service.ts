@@ -212,7 +212,6 @@ export class UserService {
     }
   }
 
-
   async uploadCsv(filePath: string): Promise<void> {
     const results = [];
 
@@ -232,7 +231,7 @@ export class UserService {
       user.last_name = record.nom;
       user.birthday = record.dateNaiss;
       user.formation = record.specialite;
-      user.date_diplome = record.Anne_Obtention;
+      user.date_diplome = record.diplôme;
       user.description = record.Derniere_Inscription;
 
       await this.userRepository.save(user);
@@ -240,5 +239,4 @@ export class UserService {
 
     fs.unlinkSync(filePath); // Clean up uploaded file
   }
-
 }

@@ -6,6 +6,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
 
+import { FormulaireController } from './formulaire/formulaire.controller';
+import { FormulaireService } from './formulaire/formulaire.service';
+import { FormulaireModule } from './formulaire/formulaire.module';
+
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -29,8 +33,9 @@ import { User } from './user/entity/user.entity';
       inject: [ConfigService],
     }),
     UserModule,
+    FormulaireModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, FormulaireController],
+  providers: [AppService, FormulaireService],
 })
 export class AppModule {}

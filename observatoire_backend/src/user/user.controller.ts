@@ -8,13 +8,11 @@ import {
   Delete,
   Query,
   BadRequestException,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schema/user.schema';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
-import { RolesGuard } from './roles/role.guard';
 import { GetUsersDto } from './dto/get-user-dto';
 
 // @UseGuards(RolesGuard)

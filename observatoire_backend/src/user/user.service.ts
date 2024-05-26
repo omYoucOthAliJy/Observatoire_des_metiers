@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+//import { InjectModel } from '@nestjs/mongoose';
 //import { User } from './schema/user.schema';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository, EntityManager } from 'typeorm';
 import { User } from './entity/user.entity';
 
-import { identity } from 'rxjs';
+//import { identity } from 'rxjs';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUsersDto } from './dto/get-user-dto';
 

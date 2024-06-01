@@ -5,7 +5,9 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
+import { Formulaire } from './formulaire/entity/form.entity';
 import { MulterModule } from '@nestjs/platform-express';
+import { FormulaireModule } from './formulaire/formulaire.module';
 
 @Module({
   imports: [
@@ -23,8 +25,7 @@ import { MulterModule } from '@nestjs/platform-express';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User],
-        //entities:[__dirname,'/**/*.entity{.ts,.js}'],
+        entities: [User, Formulaire],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -33,6 +34,7 @@ import { MulterModule } from '@nestjs/platform-express';
       dest: './uploads',
     }),
     UserModule,
+    FormulaireModule,
   ],
   controllers: [AppController],
   providers: [AppService],

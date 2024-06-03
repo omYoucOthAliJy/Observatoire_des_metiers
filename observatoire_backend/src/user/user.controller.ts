@@ -9,16 +9,17 @@ import {
   Query,
   BadRequestException,
   UseGuards,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './schema/user.schema';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
-import { RolesGuard } from './roles/role.guard';
 import { GetUsersDto } from './dto/get-user-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import { User } from './entity/user.entity';
 
 
 // @UseGuards(RolesGuard)

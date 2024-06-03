@@ -4,52 +4,60 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entity/user.entity';
-import { mailerConfig } from './config/mailer.config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { AuthModule } from './auth/auth.module';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { AdminModule } from './admin/admin.module';
 
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [
-        ConfigModule.forRoot({
-          envFilePath: '.env',
-          isGlobal: true,
-        }),
-      ],
-      MailerModule.forRootAsync({
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: {
-            host: configService.get('MAIL_HOST'),
-            port: configService.get('MAIL_PORT'),
-            auth: {
-              user: configService.get('MAIL_USER'),
-              pass: configService.get('MAIL_PASS'),
-            },
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService): Promise<any> => ({
+        type: configService.getOrThrow<string>('DB_TYPE'),
+        host: configService.getOrThrow<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.getOrThrow<string>('DB_ROOT_USER'),
+        password: configService.getOrThrow<string>('DB_ROOT_PASSWORD'),
+        database: configService.getOrThrow<string>('DB_DATABASE_NAME'), 
+        autoLoadEntities: true,
+        synchronize: configService.getOrThrow<boolean>('DB_SYNCHRONIZE'),
+      }),
+      inject: [ConfigService],
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('MAIL_HOST'),
+          port: configService.get('MAIL_PORT'),
+          auth: {
+            user: configService.get('MAIL_USER'),
+            pass: configService.get('MAIL_PASS'),
           },
-          defaults: {
-            from: `"No Reply" <${configService.get('MAIL_FROM')}>`,
+        },
+        defaults: {
+          from: `"No Reply" <${configService.get('MAIL_FROM')}>`,
+        },
+        template: {
+          dir: __dirname + '/templates',
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
           },
-          template: {
-            dir: __dirname + '/templates',
-            adapter: new HandlebarsAdapter(),
-            options: {
-              strict: true,
-            },
-          },
-        }),
-        inject: [ConfigService],
+        },
       }),
       inject: [ConfigService],
     }),
     UserModule,
+    AuthModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
 
 
 

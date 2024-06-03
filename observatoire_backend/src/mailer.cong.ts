@@ -4,11 +4,11 @@ import * as path from 'path';
 
 export const mailerConfig = MailerModule.forRoot({
   transport: {
-    host: 'smtp.mailtrap.io', // Replace with your SMTP server
-    port: 2525,
+    host: process.env.MAILER_HOST, 
+    port: process.env.MAILER_PORT,
     auth: {
-      user: 'your-mailtrap-username',
-      pass: 'your-mailtrap-password',
+      user: process.env.MAILER_USER,
+      pass: process.env.MAILER_PASSWORD,
     },
   },
   defaults: {

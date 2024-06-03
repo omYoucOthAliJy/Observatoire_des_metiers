@@ -1,54 +1,129 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Question } from './question.entity';
+import { GenderEnum } from '../enum/gender.enum';
+import { Formation } from './formation.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: number;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: false,
+  })
   email:string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  gender:string;
+  @Column({
+    type: "enum",
+    enum: GenderEnum,
+    nullable: true,
+  })
+  gender: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  name: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  firstName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  last_name: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  lastName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  birthday: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  marriedName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  formation: string;
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  birthDate: Date;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  date_diplome: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  birthPlace: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  description: string;
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  birthCountry: string;
 
+  @ManyToOne(() => Question, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: null
+  })
+  formation: Formation;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  date_diplome: Date;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  address: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  zipCode: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  city: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  country: string;
+
+  @ManyToOne(() => Question, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: null
+  })
+  question: Question;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  answer: string;
+
+  @Exclude()
+  @Column({
+    type: "varchar",
+    nullable: false,
+  })
   password: string;
+
+
+  @Column({
+    type: "boolean",
+    nullable: false,
+    default: false
+  })
+  blocked: boolean;
+
+  constructor(user: Partial<User>) {
+    Object.assign(this, user);
+}
 }

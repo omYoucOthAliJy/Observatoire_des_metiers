@@ -1,24 +1,25 @@
 version: '3.8'
+
 services:
   observatoire_frontend:
-    build: 
-      context: .
-      dockerfile: ./observatoire_frontend/Dockerfile
+    build:
+      context: ./observatoire_frontend
+      dockerfile: Dockerfile
       target: development
     container_name: frontend_container
     ports:
       - '3000:3000'
 
   observatoire_backend:
-    build: 
-      context: .
-      dockerfile: ./observatoire_backend/Dockerfile
+    build:
+      context: ./observatoire_backend
+      dockerfile: Dockerfile
       target: development
     container_name: backend_container
     ports:
       - '4000:4000'
     volumes:
-      - ./observatoire_backend:usr/src/app
+      - ./observatoire_backend:/usr/src/app
       - /usr/src/app/node_modules
     environment:
       NODE_ENV: development
@@ -35,4 +36,3 @@ services:
     container_name: mysql_container
     ports:
       - '3306:3306'
-    

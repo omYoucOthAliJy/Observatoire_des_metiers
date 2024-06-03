@@ -45,4 +45,10 @@ export class User {
   @IsString()
   @Column()
   description: string;
+
+
+  @IsNotEmpty()
+  @IsString()
+  @Column()
+  password: string;
 }

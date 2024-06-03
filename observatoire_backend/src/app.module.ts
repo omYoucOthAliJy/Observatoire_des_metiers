@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -27,6 +28,9 @@ import { User } from './user/entity/user.entity';
         synchronize: true,
       }),
       inject: [ConfigService],
+    }),
+    MulterModule.register({
+      dest: './uploads',
     }),
     UserModule,
   ],

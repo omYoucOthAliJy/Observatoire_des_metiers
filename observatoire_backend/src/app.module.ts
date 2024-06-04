@@ -12,6 +12,11 @@ import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+      isGlobal: true,
+      cache: true,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService): Promise<any> => ({
@@ -20,7 +25,7 @@ import { AdminModule } from './admin/admin.module';
         port: configService.get<number>('DB_PORT'),
         username: configService.getOrThrow<string>('DB_ROOT_USER'),
         password: configService.getOrThrow<string>('DB_ROOT_PASSWORD'),
-        database: configService.getOrThrow<string>('DB_DATABASE_NAME'), 
+        database: configService.getOrThrow<string>('DB_NAME'), 
         autoLoadEntities: true,
         synchronize: configService.getOrThrow<boolean>('DB_SYNCHRONIZE'),
       }),

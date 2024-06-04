@@ -5,7 +5,7 @@ import { User } from "src/user/entity/user.entity";
 import { EntityManager } from "typeorm";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt_user') {
     constructor(
         private readonly entityManager: EntityManager,
     ) {

@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { EntityManager } from 'typeorm';
 import { User } from 'src/user/entity/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Service responsible for handling authentication related operations.
@@ -12,7 +13,8 @@ import { User } from 'src/user/entity/user.entity';
 export class AuthService {
     constructor(
         private readonly entityManager: EntityManager,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
     ) {}
 
     /**
@@ -53,6 +55,9 @@ export class AuthService {
             email: user.email,
             formation: user.formation,
             gender: user.gender,
+        }, {
+            secret: this.configService.get<string>('JWT_SECRET'),
+            expiresIn: this.configService.get<string>('JWT_EXPIRE')
         });
 
         return { token };

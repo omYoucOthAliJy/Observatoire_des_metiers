@@ -1,127 +1,43 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  Param,
-  Put,
-  Delete,
-  Query,
-  BadRequestException,
-  UseGuards,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user-dto';
-import { UpdateUserDto } from './dto/update-user-dto';
-import { GetUsersDto } from './dto/get-user-dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import { User } from './entity/user.entity';
+import { Body, Controller, FileTypeValidator, ParseFilePipe, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { CreateUserDto } from "./dto/create-user-dto";
+import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
+import { User } from "./entity/user.entity";
+import { IdentifyUserDto } from "./dto/identify-user.dto";
 
-
-// @UseGuards(RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('filter')
-  async getUsersByCriteria(
-    @Query() getUsersDto: GetUsersDto,
-  ): Promise<{ data: User[]; count: number }> {
-    //this.logger.log('Fetching users by criteria', JSON.stringify(getUsersDto));
-    const result = await this.userService.getUsersByCriteria(getUsersDto);
-    //this.logger.log(`Found ${result.count} users matching criteria`);
-    return result;
-  }
-
-  @Get()
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
-  }
-
-  //@Roles(UserRole.ADMIN)
-  @Get('formation')
-  async getUsersByFormation(
-    @Query('formation') formation: string,
-  ): Promise<User[]> {
-    if (!formation) {
-      throw new BadRequestException('Formation parameter is required.');
-    }
-    return this.userService.findAllByFormation(formation);
-  }
-  //@Roles(UserRole.ADMIN)
-  @Get('fletter')
-  async findAllByFirstLetter(
-    @Query('letter') fletter: string,
-  ): Promise<User[]> {
-    return this.userService.findAllByFirstLetter(fletter);
-  }
-
-  //@Roles(UserRole.ADMIN)
-  @Get('startsWith')
-  async findAllByNameStartingWith(
-    @Query('startingWith') startingWith: string,
-  ): Promise<User[]> {
-    return this.userService.findAllByNameStartingWith(startingWith);
-  }
-
-  //@Roles(UserRole.ADMIN)
-  @Get('byDateDiplome')
-  async findAllByDateDiplome(
-    @Query('dateDiplome') dateDiplome: string,
-  ): Promise<User[]> {
-    return this.userService.findAllByDateDiplome(dateDiplome);
-  }
-
-  //@Roles(UserRole.ADMIN)
-  @Get(':id')
-  async getUser(@Param('id') id: string): Promise<User> {
-    return this.userService.findById(id);
-  }
-
-  //@Roles(UserRole.USER)
   @Post()
-  async createUser(@Body() user: CreateUserDto): Promise<User> {
-    return this.userService.create(user);
+  async signup(@Body() createUserDto: CreateUserDto): Promise<any> {
+    await this.userService.createUser(createUserDto);
+    return { message: 'Account created successfully.' };
   }
 
-  //@Roles(UserRole.ADMIN)
-  @Put(':id')
-  async updateUser(
-    @Param('id') id: number,
-    @Body() user: UpdateUserDto,
-  ): Promise<User> {
-    return this.userService.updateById(id, user);
+  @UseGuards(AuthGuard('jwt_user'))
+  @Post('identification')
+  async identifyUser(@Req() request: Request, @Body() identifyUserDto: IdentifyUserDto): Promise<any> {
+    const user = request.user as User;
+    await this.userService.identifyUser(user.email, identifyUserDto);
+    return { message: 'User identified successfully.' };
   }
 
-  //@Roles(UserRole.ADMIN)
-  @Delete(':id')
-  async deleteUser(@Param('id') id: number): Promise<string> {
-    return this.userService.deleteById(id);
-  }
-
-
-
-
+  @UseInterceptors(FileInterceptor('file'))
   @Post('upload')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const ext = path.extname(file.originalname);
-          const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
-          cb(null, filename);
-        },
-      }),
-    }),
-  )
-  async uploadCsv(@UploadedFile() file: Express.Multer.File): Promise<any> {
-    await this.userService.uploadCsv(file.path);
-    return { message: 'File processed successfully' };
+  async uploadCsv(
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: true,
+        validators: [
+          new FileTypeValidator({ fileType: 'text/csv' })
+        ]
+      })
+    ) file: Express.Multer.File,
+  ): Promise<any> {
+    await this.userService.uploadCsv(file);
+    return { message: 'CSV file uploaded and processed successfully.' };
   }
-
 }

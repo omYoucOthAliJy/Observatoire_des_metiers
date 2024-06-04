@@ -1,17 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique } from 'typeorm';
 import { Question } from './question.entity';
 import { GenderEnum } from '../enum/gender.enum';
 import { Formation } from './formation.entity';
 import { Exclude } from 'class-transformer';
+import { Speciality } from './speciality.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({
     type: "varchar",
-    nullable: false,
+    nullable: true,
   })
   email:string;
 
@@ -41,10 +42,10 @@ export class User {
   marriedName: string;
 
   @Column({
-    type: "date",
+    type: "varchar",
     nullable: true,
   })
-  birthDate: Date;
+  birthDate: string;
 
   @Column({
     type: "varchar",
@@ -53,23 +54,30 @@ export class User {
   birthPlace: string;
 
   @Column({
-    type: "date",
+    type: "varchar",
     nullable: true,
   })
   birthCountry: string;
 
-  @ManyToOne(() => Question, {
+  @ManyToOne(() => Formation, {
     eager: true,
     onDelete: "NO ACTION",
-    nullable: null
+    nullable: true
   })
   formation: Formation;
 
+  @ManyToOne(() => Speciality, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: true
+  })
+  speciality: Speciality;
+
   @Column({
-    type: "date",
+    type: "varchar",
     nullable: true,
   })
-  date_diplome: Date;
+  date_diplome: string;
 
   @Column({
     type: "varchar",
@@ -111,7 +119,7 @@ export class User {
   @Exclude()
   @Column({
     type: "varchar",
-    nullable: false,
+    nullable: true,
   })
   password: string;
 
@@ -122,6 +130,13 @@ export class User {
     default: false
   })
   blocked: boolean;
+
+  @Column({
+    type: "boolean",
+    nullable: false,
+    default: true
+  })
+  firstConnection: boolean;
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);

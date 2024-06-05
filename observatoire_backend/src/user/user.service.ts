@@ -10,7 +10,6 @@ import { User } from './entity/user.entity';
 
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUsersDto } from './dto/get-user-dto';
-import * as fs from 'fs';
 
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
@@ -21,7 +20,8 @@ import { CSVParserService } from 'src/utils/parser/csv-parser.service';
 import { Speciality } from './entity/speciality.entity';
 import { IdentifyUserDto } from './dto/identify-user.dto';
 import { Question } from './entity/question.entity';
-
+import { GetUserByEmailDto } from './dto/get_user_by_email.dto';
+import { UserForgotPasswordDto } from './dto/user-forgot-password.dto';
 
 @Injectable()
 export class UserService {
@@ -32,46 +32,51 @@ export class UserService {
     private mailerService: MailerService,
   ) {}
 
+  /**
+   * Creates a new user.
+   * @param createUserDto - The DTO containing user creation details.
+   * @returns The created user.
+   * @throws ConflictException if a user with the provided email already exists.
+   */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      let user = await this.entityManager.findOneBy(User, {email: createUserDto.email});
+      let user = await this.entityManager.findOneBy(User, { email: createUserDto.email });
 
       if (user) {
-        throw new ConflictException('user with that email already exists');
+        throw new ConflictException('A user with that email already exists');
       }
       
       const password = this.generateRandomPassword();
-      console.log(password)
-      const passwordHash = await  this.hashPassword(password);
+      const passwordHash = await this.hashPassword(password);
       user = new User({
         email: createUserDto.email,
         password: passwordHash
-      })
+      });
 
       await this.entityManager.save(user);
 
-      //await this.sendPasswordResetEmail(createUserDto.email, password);
+      // await this.sendPasswordResetEmail(createUserDto.email, password);
 
       return user;
-    } catch(error) {
-      throw error;
+    } catch (error) {
+      throw new BadRequestException('Failed to create user: ' + error.message);
     }
   }
 
+  /**
+   * Identifies and updates a user based on the provided details.
+   * @param email - The email of the user.
+   * @param identifyUserDto - The DTO containing identification details.
+   * @returns The updated user.
+   * @throws NotFoundException if the user or other entities are not found.
+   * @throws BadRequestException if the request is invalid.
+   */
   async identifyUser(email: string, identifyUserDto: IdentifyUserDto): Promise<User> {
     try {
       const newUser = await this.entityManager.transaction(async (entityManager) => {
-        const formation = await entityManager.findOneByOrFail(Formation, {
-          id: identifyUserDto.formationId,
-        });
-
-        const speciality = await entityManager.findOneByOrFail(Speciality, {
-          id: identifyUserDto.specialityId,
-        });
-
-        const question = await entityManager.findOneByOrFail(Question, {
-          id: identifyUserDto.questionId,
-        });
+        const formation = await entityManager.findOneByOrFail(Formation, { id: identifyUserDto.formationId });
+        const speciality = await entityManager.findOneByOrFail(Speciality, { id: identifyUserDto.specialityId });
+        const question = await entityManager.findOneByOrFail(Question, { id: identifyUserDto.questionId });
         
         let user = await entityManager.findOneByOrFail(User, {
           firstName: this.capitalizeFirstLetter(identifyUserDto.firstName.toLowerCase()),
@@ -82,20 +87,12 @@ export class UserService {
           gender: identifyUserDto.gender,
           firstConnection: true,
         });
-  
-        let connectionUser = await entityManager.findOneByOrFail(User,{
+
+        let connectionUser = await entityManager.findOneByOrFail(User, {
           email: email,
           firstConnection: true,
-        })
-  
-        if (!user || !formation) {
-          throw new NotFoundException('No User With those Specifications');
-        }
-  
-        if (!connectionUser) {
-          throw new NotFoundException('User not found');
-        }
-  
+        });
+
         user.email = email;
         user.password = connectionUser.password;
         user.firstName = identifyUserDto.firstName;
@@ -115,39 +112,43 @@ export class UserService {
         user.date_diplome = identifyUserDto.date_diplome;
         user.gender = identifyUserDto.gender;
         user.firstConnection = false;
-  
+
         await entityManager.save(user);
-        await entityManager.delete(User, {id: connectionUser.id});
+        await entityManager.delete(User, { id: connectionUser.id });
 
         return user;
       });
-    
+
       return newUser;
-    } catch(error) {
+    } catch (error) {
       if (error instanceof EntityNotFoundError) {
-        throw new BadRequestException(error.message)
+        throw new NotFoundException('User or related entity not found: ' + error.message);
       }
-      throw error;
+      throw new BadRequestException('Failed to identify user: ' + error.message);
     }
   }
 
-
+  /**
+   * Fetches users based on given criteria.
+   * @param getUsersDto - The DTO containing user search criteria.
+   * @returns A list of users and the total count.
+   * @throws BadRequestException if the request is invalid.
+   */
   async getUsersByCriteria(
     getUsersDto: GetUsersDto,
   ): Promise<{ data: User[]; count: number }> {
-    // this.logger.log('Fetching users by criteria', JSON.stringify(getUsersDto));
     try {
       const {
         page = 1,
         size = 10,
 
-        //filter
+        // Filters
         name,
         formation,
         speciality,
         date_diplome,
 
-        //order
+        // Sorting
         name_sort,
         date_diplome_sort,
         formation_sort,
@@ -159,31 +160,31 @@ export class UserService {
         .createQueryBuilder("user")
         .innerJoinAndSelect("user.formation", "formation")
         .innerJoinAndSelect("user.speciality", "speciality")
-        .skip((page-1) * size)
+        .skip((page - 1) * size)
         .take(size);
 
-      if(name_sort !== undefined) {
+      if (name_sort !== undefined) {
         usersQuery.orderBy("user.firstName", name_sort)
-          .addOrderBy("user.lastName", name_sort);;
+                  .addOrderBy("user.lastName", name_sort);
       }
-      if(date_diplome_sort !== undefined) usersQuery.orderBy("user.date_diplome", date_diplome_sort);
-      if(formation_sort !== undefined) usersQuery.orderBy("user.formation", formation_sort);
-      if(speciality_sort !== undefined) usersQuery.orderBy("user.speciality", speciality_sort);
+      if (date_diplome_sort !== undefined) usersQuery.orderBy("user.date_diplome", date_diplome_sort);
+      if (formation_sort !== undefined) usersQuery.orderBy("user.formation", formation_sort);
+      if (speciality_sort !== undefined) usersQuery.orderBy("user.speciality", speciality_sort);
 
-      if(name !== undefined) {
+      if (name !== undefined) {
         usersQuery = usersQuery.andWhere("CONCAT(firstName, ' ', lastName) LIKE :name", { name: `${name}%` });
       }
 
-      if(formation !== undefined) {
+      if (formation !== undefined) {
         usersQuery = usersQuery.andWhere('formation.title LIKE :formation', { formation: `${formation}%` });
       }
 
-      if(speciality !== undefined) {
+      if (speciality !== undefined) {
         usersQuery = usersQuery.andWhere('speciality.title LIKE :speciality', { speciality: `${speciality}%` });
       }
 
-      if(date_diplome !== undefined) {
-        usersQuery = usersQuery.andWhere('date_diplome LIKE :dateDiplome', { dateDiplome: `%${date_diplome}` });
+      if (date_diplome !== undefined) {
+        usersQuery = usersQuery.andWhere('date_diplome LIKE :dateDiplome', { dateDiplome: `%${date_diplome}%` });
       }
 
       const [users, count] = await usersQuery.getManyAndCount();
@@ -193,28 +194,104 @@ export class UserService {
         count,
       };
     } catch (error) {
-      throw error;
+      throw new BadRequestException('Failed to fetch users: ' + error.message);
     }
   }
 
+  /**
+   * Fetches a user by their ID.
+   * @param id - The ID of the user.
+   * @returns The user entity.
+   * @throws NotFoundException if the user is not found.
+   * @throws BadRequestException if the request is invalid.
+   */
   async getUserById(id: string): Promise<User> {
     try {
       const user = await this.entityManager.findOneOrFail(User, {
-        where: {id},
+        where: { id },
         relations: {
           formation: true,
           speciality: true,
         }
       });
       return user;
-    } catch(error) {
+    } catch (error) {
       if (error instanceof EntityNotFoundError) {
-        throw new BadRequestException(error.message)
+        throw new NotFoundException('User not found: ' + error.message);
       }
-      throw error;
+      throw new BadRequestException('Failed to fetch user: ' + error.message);
     }
   }
 
+  /**
+   * Fetches a user by their email.
+   * @param getUserByEmailDto - The DTO containing the user's email.
+   * @returns The user entity.
+   * @throws NotFoundException if the user is not found.
+   * @throws BadRequestException if the request is invalid.
+   */
+  async getUserByEmail(getUserByEmailDto: GetUserByEmailDto): Promise<User> {
+    try {
+      const user = await this.entityManager.findOneOrFail(User, {
+        where: { email: getUserByEmailDto.email },
+        relations: {
+          formation: true,
+          speciality: true,
+        }
+      });
+      return user;
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException('User not found: ' + error.message);
+      }
+      throw new BadRequestException('Failed to fetch user: ' + error.message);
+    }
+  }
+
+  /**
+   * Resets the password for a user who forgot their password.
+   * @param userForgotPasswordDto - The DTO containing the user's email and security question answer.
+   * @throws BadRequestException if the provided answer is incorrect or the request is invalid.
+   */
+  async userForgotPassword(userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
+    try {
+      await this.entityManager.transaction(async (entityManager) => {
+        const user = await entityManager.findOneOrFail(User, {
+          where: {
+            email: userForgotPasswordDto.email,
+            question: { id: userForgotPasswordDto.questionId }
+          },
+          relations: {
+            formation: true,
+            speciality: true,
+          }
+        });
+
+        if (user.answer !== userForgotPasswordDto.answer) {
+          throw new BadRequestException("The provided answer is incorrect");
+        }
+
+        const password = this.generateRandomPassword();
+        const passwordHash = await this.hashPassword(password);
+        user.password = passwordHash;
+
+        await entityManager.save(user);
+        // Optionally send the new password to the user
+        // await this.sendPasswordResetEmail(user.email, password);
+      });
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException('User not found or invalid security question: ' + error.message);
+      }
+      throw new BadRequestException('Failed to reset password: ' + error.message);
+    }
+  }
+
+  /**
+   * Sends a password reset email.
+   * @param email - The email of the user.
+   * @param password - The new password.
+   */
   async sendPasswordResetEmail(email: string, password: string) {
     await this.mailerService.sendMail({
       to: email,
@@ -224,7 +301,12 @@ export class UserService {
     });
   }
 
-
+  /**
+   * Uploads and processes a CSV file to create users.
+   * @param file - The CSV file.
+   * @throws BadRequestException if a user in the file already exists or other validation fails.
+   * @throws Error if the CSV upload fails.
+   */
   async uploadCsv(file: Express.Multer.File): Promise<void> {
     try {
       await this.entityManager.transaction(async (entityManager) => {
@@ -233,63 +315,66 @@ export class UserService {
         const formations = await entityManager.find(Formation);
         const userEntries: UserEntry[] = await csvParser.parse(file, specialities, formations);
 
-        let user;
-        let speciality;
-        let formation;
-        let existsUser;
-
         for (let item of userEntries) {
-          speciality = await entityManager.findOneByOrFail(Speciality, {title: item.speciality});
-          formation = await entityManager.findOneByOrFail(Formation, {title: item.formation})
-          existsUser = await entityManager.findOneBy(User,{
-            ...item, 
+          const speciality = await entityManager.findOneByOrFail(Speciality, { title: item.speciality });
+          const formation = await entityManager.findOneByOrFail(Formation, { title: item.formation });
+          const existsUser = await entityManager.findOneBy(User, {
+            ...item,
             firstName: this.capitalizeFirstLetter(item.firstName.toLowerCase()),
-            lastName:  this.capitalizeFirstLetter(item.lastName.toLowerCase()),
+            lastName: this.capitalizeFirstLetter(item.lastName.toLowerCase()),
             speciality,
             formation,
-            gender: item.gender == "M" ? "MALE": item.gender == "F" ? "FEMALE": null,
+            gender: item.gender == "M" ? "MALE" : item.gender == "F" ? "FEMALE" : null,
           });
 
-          if(existsUser != null) {
-            throw new BadRequestException("A User in the file already exists");
+          if (existsUser != null) {
+            throw new BadRequestException("A user in the file already exists");
           }
-          console.log(item)
-          user = new User({
-            ...item, 
+
+          const user = new User({
+            ...item,
             speciality,
             formation,
-            gender: item.gender == "M" ? "MALE": item.gender == "F" ? "FEMALE": null,
+            gender: item.gender == "M" ? "MALE" : item.gender == "F" ? "FEMALE" : null,
           });
 
           await entityManager.save(user);
         }
-
-        return
       });
-      
-      return;
     } catch (error) {
-      // Log the error or handle it as needed
       console.error('Error uploading CSV:', error);
-      if (error instanceof EntityNotFoundError || error instanceof BadRequestException ) {
-        throw new BadRequestException(error.message)
+      if (error instanceof EntityNotFoundError || error instanceof BadRequestException) {
+        throw new BadRequestException('CSV upload failed: ' + error.message);
       }
 
-      throw new Error('Failed to upload CSV');
+      throw new Error('Failed to upload CSV: ' + error.message);
     }
-  }  
-
-
-  
-  private generateRandomPassword(): string {
-    return crypto.randomBytes(8).toString('hex'); // Generates a 16-character random password
   }
+
+  /**
+   * Generates a random password.
+   * @returns A random 16-character password.
+   */
+  private generateRandomPassword(): string {
+    return crypto.randomBytes(8).toString('hex');
+  }
+
+  /**
+   * Hashes a password using bcrypt.
+   * @param password - The password to hash.
+   * @returns The hashed password.
+   */
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);
   }
 
-  private capitalizeFirstLetter(string) {
+  /**
+   * Capitalizes the first letter of a string.
+   * @param string - The string to capitalize.
+   * @returns The string with the first letter capitalized.
+   */
+  private capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }

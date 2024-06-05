@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, FileTypeValidator, Get, Param, ParseFilePipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateUserDto } from "./dto/create-user-dto";
@@ -7,6 +7,8 @@ import { Request } from "express";
 import { User } from "./entity/user.entity";
 import { IdentifyUserDto } from "./dto/identify-user.dto";
 import { GetUsersDto } from "./dto/get-user-dto";
+import { GetUserByEmailDto } from "./dto/get_user_by_email.dto";
+import { UserForgotPasswordDto } from "./dto/user-forgot-password.dto";
 
 
 
@@ -55,5 +57,16 @@ export class UserController {
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User> {
     return await this.userService.getUserById(id);
+  }
+
+  @Get('/email')
+  async getUserByEmail(@Query(ValidationPipe) getUserByEmailDto: GetUserByEmailDto): Promise<User> {
+    return await this.userService.getUserByEmail(getUserByEmailDto);
+  }
+
+
+  @Put('/password')
+  async userForgotPassword(@Body() userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
+    return await this.userService.userForgotPassword(userForgotPasswordDto);
   }
 }

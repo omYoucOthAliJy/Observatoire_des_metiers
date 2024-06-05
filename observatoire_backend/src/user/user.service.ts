@@ -55,7 +55,7 @@ export class UserService {
 
       await this.entityManager.save(user);
 
-      // await this.sendPasswordResetEmail(createUserDto.email, password);
+      await this.sendPasswordResetEmail(createUserDto.email, password);
 
       return user;
     } catch (error) {
@@ -276,8 +276,8 @@ export class UserService {
         user.password = passwordHash;
 
         await entityManager.save(user);
-        // Optionally send the new password to the user
-        // await this.sendPasswordResetEmail(user.email, password);
+
+        await this.sendPasswordResetEmail(user.email, password);
       });
     } catch (error) {
       if (error instanceof EntityNotFoundError) {

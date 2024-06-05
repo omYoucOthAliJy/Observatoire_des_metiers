@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, IsEnum, Matches } from 'class-validator';
+
+
+enum SortEnum {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 
 export class GetUsersDto {
   @IsOptional()
@@ -13,17 +20,36 @@ export class GetUsersDto {
 
   @IsOptional()
   @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  speciality?: string;
+
+  @IsOptional()
+  @IsString()
   formation?: string;
 
   @IsOptional()
   @IsString()
-  letter?: string;
+  @Matches(/^(19|20)\d{2}$/, {
+    message: 'dateDiplome must be a valid year in the format YYYY',
+  })
+  date_diplome?: string;
 
+  @IsEnum(SortEnum)
   @IsOptional()
-  @IsString()
-  startingWith?: string;
+  name_sort: SortEnum;
 
+  @IsEnum(SortEnum)
   @IsOptional()
-  @IsString()
-  dateDiplome?: string;
+  date_diplome_sort?: SortEnum;
+
+  @IsEnum(SortEnum)
+  @IsOptional()
+  speciality_sort?: SortEnum;
+
+  @IsEnum(SortEnum)
+  @IsOptional()
+  formation_sort?: SortEnum;
 }

@@ -140,59 +140,81 @@ export class UserService {
       const {
         page = 1,
         size = 10,
+
+        //filter
+        name,
         formation,
-        letter,
-        startingWith,
-        dateDiplome,
+        speciality,
+        date_diplome,
+
+        //order
+        name_sort,
+        date_diplome_sort,
+        formation_sort,
+        speciality_sort,
       } = getUsersDto;
 
-      // Initialize the query builder
-      const usersQuery = this.userRepository
-        .createQueryBuilder('user')
-        .skip((page - 1) * size)
+      let usersQuery = this.entityManager
+        .getRepository(User)
+        .createQueryBuilder("user")
+        .innerJoinAndSelect("user.formation", "formation")
+        .innerJoinAndSelect("user.speciality", "speciality")
+        .skip((page-1) * size)
         .take(size);
 
-      // Apply filters
-      if (formation) {
-        usersQuery.andWhere('user.formation = :formation', { formation });
+      if(name_sort !== undefined) {
+        usersQuery.orderBy("user.firstName", name_sort)
+          .addOrderBy("user.lastName", name_sort);;
+      }
+      if(date_diplome_sort !== undefined) usersQuery.orderBy("user.date_diplome", date_diplome_sort);
+      if(formation_sort !== undefined) usersQuery.orderBy("user.formation", formation_sort);
+      if(speciality_sort !== undefined) usersQuery.orderBy("user.speciality", speciality_sort);
+
+      if(name !== undefined) {
+        usersQuery = usersQuery.andWhere("CONCAT(firstName, ' ', lastName) LIKE :name", { name: `${name}%` });
       }
 
-      if (letter) {
-        usersQuery.andWhere('user.name LIKE :letter', { letter: `${letter}%` });
+      if(formation !== undefined) {
+        usersQuery = usersQuery.andWhere('formation.title LIKE :formation', { formation: `${formation}%` });
       }
 
-      if (startingWith) {
-        usersQuery.andWhere('user.name LIKE :startingWith', {
-          startingWith: `${startingWith}%`,
-        });
+      if(speciality !== undefined) {
+        usersQuery = usersQuery.andWhere('speciality.title LIKE :speciality', { speciality: `${speciality}%` });
       }
 
-      if (dateDiplome) {
-        usersQuery.andWhere('user.dateDiplome = :dateDiplome', { dateDiplome });
+      if(date_diplome !== undefined) {
+        usersQuery = usersQuery.andWhere('date_diplome LIKE :dateDiplome', { dateDiplome: `%${date_diplome}` });
       }
 
-      // Execute the query
       const [users, count] = await usersQuery.getManyAndCount();
-
-      //this.logger.log(`Found ${count} users matching criteria`);
 
       return {
         data: users,
         count,
       };
     } catch (error) {
-      //this.logger.error('Error fetching users by criteria', error.stack);
       throw error;
     }
   }
 
-  private generateRandomPassword(): string {
-    return crypto.randomBytes(8).toString('hex'); // Generates a 16-character random password
+  async getUserById(id: string): Promise<User> {
+    try {
+      const user = await this.entityManager.findOneOrFail(User, {
+        where: {id},
+        relations: {
+          formation: true,
+          speciality: true,
+        }
+      });
+      return user;
+    } catch(error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new BadRequestException(error.message)
+      }
+      throw error;
+    }
   }
-  private async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
-  }
+
   async sendPasswordResetEmail(email: string, password: string) {
     await this.mailerService.sendMail({
       to: email,
@@ -257,7 +279,17 @@ export class UserService {
     }
   }  
 
-  capitalizeFirstLetter(string) {
+
+  
+  private generateRandomPassword(): string {
+    return crypto.randomBytes(8).toString('hex'); // Generates a 16-character random password
+  }
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  }
+
+  private capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  }
 }

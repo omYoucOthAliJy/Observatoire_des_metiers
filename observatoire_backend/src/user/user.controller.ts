@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, ParseFilePipe, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, FileTypeValidator, Get, Param, ParseFilePipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateUserDto } from "./dto/create-user-dto";
@@ -6,7 +6,11 @@ import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { User } from "./entity/user.entity";
 import { IdentifyUserDto } from "./dto/identify-user.dto";
+import { GetUsersDto } from "./dto/get-user-dto";
 
+
+
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -39,5 +43,17 @@ export class UserController {
   ): Promise<any> {
     await this.userService.uploadCsv(file);
     return { message: 'CSV file uploaded and processed successfully.' };
+  }
+
+
+  @Get()
+  async getListOfUsers(@Query(ValidationPipe) getUsersDto: GetUsersDto): Promise<{data: User[], count: number}> {
+    return await this.userService.getUsersByCriteria(getUsersDto);
+  }
+
+
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<User> {
+    return await this.userService.getUserById(id);
   }
 }

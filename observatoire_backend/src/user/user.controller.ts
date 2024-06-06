@@ -21,19 +21,19 @@ import { GetUsersDto } from './dto/get-user-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import { Roles, UserRole } from './roles/roles.decorator';
 
-// @UseGuards(RolesGuard)
+@UseGuards(RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @Roles(UserRole.ADMIN)
   @Get('filter')
   async getUsersByCriteria(
     @Query() getUsersDto: GetUsersDto,
   ): Promise<{ data: User[]; count: number }> {
-    //this.logger.log('Fetching users by criteria', JSON.stringify(getUsersDto));
     const result = await this.userService.getUsersByCriteria(getUsersDto);
-    //this.logger.log(`Found ${result.count} users matching criteria`);
     return result;
   }
 
@@ -76,19 +76,19 @@ export class UserController {
     return this.userService.findAllByDateDiplome(dateDiplome);
   }
 
-  //@Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
     return this.userService.findById(id);
   }
 
-  //@Roles(UserRole.USER)
+  @Roles(UserRole.USER)
   @Post()
   async createUser(@Body() user: CreateUserDto): Promise<User> {
     return this.userService.create(user);
   }
 
-  //@Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @Put(':id')
   async updateUser(
     @Param('id') id: number,
@@ -97,7 +97,7 @@ export class UserController {
     return this.userService.updateById(id, user);
   }
 
-  //@Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN)
   @Delete(':id')
   async deleteUser(@Param('id') id: number): Promise<string> {
     return this.userService.deleteById(id);

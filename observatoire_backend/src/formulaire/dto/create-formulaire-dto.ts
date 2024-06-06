@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
+import { FormStatus } from '../enum'; // Assurez-vous que le chemin est correct
 
 export class CreateFormulaireDto {
   @IsNumber()
@@ -65,7 +72,7 @@ export class CreateFormulaireDto {
   @IsNumber()
   Salair_brut?: number;
 
-  @IsString()
+  @IsEnum(FormStatus)
   @IsNotEmpty()
-  status: string;
+  status: FormStatus;
 }

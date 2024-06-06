@@ -1,72 +1,86 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsNotEmpty } from 'class-validator';
-
-//import { Question } from './question.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Question } from './question.entity'; // Assurez-vous que le chemin est correct
+export enum FormStatus {
+  PENDING = 'pending',
+  SUBMIT = 'submit',
+}
 
 @Entity()
 export class Formulaire {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column(IsNotEmpty)
+  @Column({ type: 'int' })
   user_id: number;
 
-  //nb mois  pour trouver l'emploie
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
+  reponse: string;
+
+  @Column({ type: 'int', nullable: true })
   temps: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   Localisation: string;
 
-  // Embaucher en tant que cadre
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   signature: string;
 
-  // Embaucher en tant que cadre
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   Entreprise: string;
 
-  // Embaucher en tant que cadre
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   Nom_group: string;
 
-  // Embaucher en tant que cadre
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   secteur_activite: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   fonction: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   adresse_entreprise: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   Pays: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   code_postal: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   ville: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   courriel_pro: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   type_contrat: string;
 
-  // Si CDD
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   mois: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   Salair_brut: number;
 
-  @Column()
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: FormStatus,
+    default: FormStatus.PENDING,
+  })
+  status: FormStatus;
 
-  //   @OneToMany(() => Question, (question) => question.formulaire, {
-  //     cascade: true,
-  //   })
-  //   questions: Question[];
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
+  @ManyToOne(() => Question, (question) => question.formulaires)
+  question: Question;
 }

@@ -20,14 +20,6 @@ export class UpdateUserDto {
   @IsString()
   readonly lastName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  gender: string;
-
   @IsOptional()
   @IsString()
   readonly marriedName: string;

@@ -9,6 +9,7 @@ import { AdminModule } from './admin/admin.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { join } from 'path';
+import { MulterModule } from '@nestjs/platform-express';
 
 
 @Module({

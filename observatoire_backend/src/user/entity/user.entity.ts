@@ -1,54 +1,144 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique } from 'typeorm';
+import { Question } from './question.entity';
+import { GenderEnum } from '../enum/gender.enum';
+import { Formation } from './formation.entity';
+import { Exclude } from 'class-transformer';
+import { Speciality } from './speciality.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   email:string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  gender:string;
+  @Column({
+    type: "enum",
+    enum: GenderEnum,
+    nullable: true,
+  })
+  gender: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  name: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  firstName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  last_name: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  lastName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  birthday: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  marriedName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  formation: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  birthDate: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  birthPlace: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  birthCountry: string;
+
+  @ManyToOne(() => Formation, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: true
+  })
+  formation: Formation;
+
+  @ManyToOne(() => Speciality, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: true
+  })
+  speciality: Speciality;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   date_diplome: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
-  description: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  address: string;
 
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  zipCode: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  city: string;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  country: string;
+
+  @ManyToOne(() => Question, {
+    eager: true,
+    onDelete: "NO ACTION",
+    nullable: null
+  })
+  question: Question;
+
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  answer: string;
+
+  @Exclude()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   password: string;
+
+
+  @Column({
+    type: "boolean",
+    nullable: false,
+    default: false
+  })
+  blocked: boolean;
+
+  @Column({
+    type: "boolean",
+    nullable: false,
+    default: true
+  })
+  firstConnection: boolean;
+
+  constructor(user: Partial<User>) {
+    Object.assign(this, user);
+}
 }

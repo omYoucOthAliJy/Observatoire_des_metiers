@@ -9,6 +9,7 @@ import { IdentifyUserDto } from "./dto/identify-user.dto";
 import { GetUsersDto } from "./dto/get-user-dto";
 import { GetUserByEmailDto } from "./dto/get_user_by_email.dto";
 import { UserForgotPasswordDto } from "./dto/user-forgot-password.dto";
+import { UpdateUserPasswordDto } from "./dto/update-user-password.dto";
 
 
 
@@ -65,7 +66,16 @@ export class UserController {
   }
 
 
+  @UseGuards(AuthGuard('jwt_user'))
   @Put('/password')
+  async userUpdatePassword(@Req() request: Request,@Body() updateUserPasswordDto: UpdateUserPasswordDto): Promise<{message: string}> {
+    const user = request.user as User;
+    await this.userService.updateCurrentUserPassword(user.id, updateUserPasswordDto);
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  @Put('/forgot/password')
   async userForgotPassword(@Body() userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
     return await this.userService.userForgotPassword(userForgotPasswordDto);
   }

@@ -22,14 +22,13 @@ import { IdentifyUserDto } from './dto/identify-user.dto';
 import { Question } from './entity/question.entity';
 import { GetUserByEmailDto } from './dto/get_user_by_email.dto';
 import { UserForgotPasswordDto } from './dto/user-forgot-password.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     private readonly entityManager: EntityManager,
-    private mailerService: MailerService,
+    private readonly mailerService: MailerService,
   ) {}
 
   /**
@@ -40,24 +39,30 @@ export class UserService {
    */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      let user = await this.entityManager.findOneBy(User, { email: createUserDto.email });
 
-      if (user) {
-        throw new ConflictException('A user with that email already exists');
-      }
-      
-      const password = this.generateRandomPassword();
-      const passwordHash = await this.hashPassword(password);
-      user = new User({
-        email: createUserDto.email,
-        password: passwordHash
-      });
+      const newUser = await this.entityManager.transaction(async (entityManager) => {
+        
+        let user = await entityManager.findOneBy(User, { email: createUserDto.email });
 
-      await this.entityManager.save(user);
+        if (user) {
+          throw new ConflictException('A user with that email already exists');
+        }
+        
+        const password = this.generateRandomPassword();
+        const passwordHash = await this.hashPassword(password);
+        user = new User({
+          email: createUserDto.email,
+          password: passwordHash
+        });
 
-      await this.sendPasswordResetEmail(createUserDto.email, password);
+        await entityManager.save(user);
 
-      return user;
+        await this.sendPasswordResetEmail(createUserDto.email, password);
+
+        return user;
+      })
+
+      return newUser;
     } catch (error) {
       throw new BadRequestException('Failed to create user: ' + error.message);
     }
@@ -277,7 +282,7 @@ export class UserService {
 
         await entityManager.save(user);
 
-        await this.sendPasswordResetEmail(user.email, password);
+        await this.sendPasswordResetEmail(user.email, password, user.firstName, user.lastName);
       });
     } catch (error) {
       if (error instanceof EntityNotFoundError) {
@@ -287,17 +292,62 @@ export class UserService {
     }
   }
 
+
+  /**
+   * Updates the current user's password.
+   * @param {string} id - The ID of the user whose password is to be updated.
+   * @param {UpdateUserPasswordDto} updateUserPasswordDto - An object containing the current password and the new password.
+   * @returns {Promise<void>} A promise that resolves when the password has been successfully updated.
+   * @throws {BadRequestException} If the current password is incorrect or the user is not found.
+   * @throws {Error} For any other errors encountered during the process.
+   */
+  async updateCurrentUserPassword(
+    id: string, 
+    updateUserPasswordDto: UpdateUserPasswordDto
+  ): Promise<void> {
+    try {
+        const { currentPassword, newPassword } = updateUserPasswordDto;
+        let user: User;
+
+        await this.entityManager.transaction(async (entityManager) => {
+            user = await entityManager.findOneByOrFail(User, { id });
+
+            if (!bcrypt.compareSync(currentPassword, user.password)) {
+                throw new BadRequestException('Current password is incorrect.');
+            }
+
+            const passwordHash = await this.hashPassword(newPassword);
+            user.password = passwordHash;
+
+            await entityManager.save(user);
+        });
+
+        return;
+    } catch (error) {
+        // Handle case where entity not found (e.g., user not found)
+        if (error instanceof EntityNotFoundError) {
+            throw new BadRequestException('User not found.');
+        }
+
+        // Rethrow any other errors
+        throw error;
+    }
+  }
+
+
   /**
    * Sends a password reset email.
    * @param email - The email of the user.
    * @param password - The new password.
+   * @param firstName - The user first name.
+   * @param lastName - The user last name.
    */
-  async sendPasswordResetEmail(email: string, password: string) {
+  async sendPasswordResetEmail(email: string, password: string, firstName?: string, lastName?: string) {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Your new password',
       template: './reset-password', // The name of the template file
-      context: { password }, // The context to pass to the template
+      context: { password, firstName, lastName }, // The context to pass to the template
     });
   }
 

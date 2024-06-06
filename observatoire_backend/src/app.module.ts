@@ -4,10 +4,11 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { AdminModule } from './admin/admin.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { join } from 'path';
 
 
 @Module({
@@ -35,22 +36,22 @@ import { AdminModule } from './admin/admin.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         transport: {
-          host: configService.get('MAIL_HOST'),
-          port: configService.get('MAIL_PORT'),
+          host: configService.getOrThrow('MAILER_HOST'),
+          port: configService.getOrThrow('MAILER_PORT'),
           auth: {
-            user: configService.get('MAIL_USER'),
-            pass: configService.get('MAIL_PASS'),
+            user: configService.getOrThrow('MAILER_USER'),
+            pass: configService.getOrThrow('MAILER_PASSWORD'),
           },
         },
         defaults: {
-          from: `"No Reply" <${configService.get('MAIL_FROM')}>`,
+          from: `"No Reply" <${configService.getOrThrow('MAIL_FROM')}>`,
         },
         template: {
-          dir: __dirname + '/templates',
-          adapter: new HandlebarsAdapter(),
+          dir: join(__dirname, 'templates'),
+          adapter: new EjsAdapter(),
           options: {
-            strict: true,
-          },
+            strict: false
+          }
         },
       }),
       inject: [ConfigService],

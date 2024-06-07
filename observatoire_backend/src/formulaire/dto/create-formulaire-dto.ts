@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { FormStatus } from '../enum'; // Assurez-vous que le chemin est correct
+import { FormStatus,Contrat } from '../enum'; 
 
 export class CreateFormulaireDto {
   @IsNumber()
@@ -60,9 +60,9 @@ export class CreateFormulaireDto {
   @IsString()
   courriel_pro?: string;
 
-  @IsOptional()
-  @IsString()
-  type_contrat?: string;
+  @IsEnum(Contrat)
+  @IsNotEmpty()
+  type_contrat?: Contrat;
 
   @IsOptional()
   @IsNumber()

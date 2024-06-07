@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
-import { FormStatus } from '../enum'; // Assurez-vous que le chemin est correct
+import { Contrat, FormStatus } from '../enum';
 
 export class UpdateFormulaireDto {
   @IsOptional()
@@ -51,8 +51,8 @@ export class UpdateFormulaireDto {
   courriel_pro?: string;
 
   @IsOptional()
-  @IsString()
-  type_contrat?: string;
+  @IsEnum(Contrat)
+  type_contrat?: Contrat;
 
   @IsOptional()
   @IsNumber()

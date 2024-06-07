@@ -35,6 +35,7 @@ export class FormulaireController {
     return this.formulaireService.create(createFormulaireDto);
   }
 
+  //Submit quand le formulaire est complet
   @Roles(UserRole.USER)
   @Post('submit')
   async submitFormulaire(
@@ -44,6 +45,7 @@ export class FormulaireController {
     return this.formulaireService.create(createFormulaireDto);
   }
 
+  //sauvegarde le formulaire pour finir plus tard
   @Post('save')
   async saveFormulaire(
     @Body() createFormulaireDto: CreateFormulaireDto,

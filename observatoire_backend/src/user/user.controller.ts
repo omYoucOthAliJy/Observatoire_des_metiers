@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateUserDto } from "./dto/create-user-dto";
@@ -10,6 +10,7 @@ import { GetUsersDto } from "./dto/get-user-dto";
 import { GetUserByEmailDto } from "./dto/get_user_by_email.dto";
 import { UserForgotPasswordDto } from "./dto/user-forgot-password.dto";
 import { UpdateUserPasswordDto } from "./dto/update-user-password.dto";
+import { UpdateUserDto } from "./dto/update-user-dto";
 
 
 
@@ -79,4 +80,39 @@ export class UserController {
   async userForgotPassword(@Body() userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
     return await this.userService.userForgotPassword(userForgotPasswordDto);
   }
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User | undefined> {
+    return this.userService.updateById(id, updateUserDto);
+  }
+
+  //@Roles(UserRole.ADMIN)
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string): Promise<string> {
+  return this.userService.deleteById(id);
+}
+
+
+
+
+  // @Post('upload')
+  // @UseInterceptors(
+  //   FileInterceptor('file', {
+  //     storage: diskStorage({
+  //       destination: './uploads',
+  //       filename: (req, file, cb) => {
+  //         const ext = path.extname(file.originalname);
+  //         const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
+  //         cb(null, filename);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // async uploadCsv(@UploadedFile() file: Express.Multer.File): Promise<any> {
+  //   await this.userService.uploadCsv(file.path);
+  //   return { message: 'File processed successfully' };
+  // }
+
 }

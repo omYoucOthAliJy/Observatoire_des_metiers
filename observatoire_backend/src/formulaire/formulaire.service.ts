@@ -2,7 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,7 +26,7 @@ export class FormulaireService {
   }
 
   async findAll(): Promise<Formulaire[]> {
-    return await this.formulaireRepository.find({ relations: ['questions'] });
+    return await this.formulaireRepository.find({ relations: ['question'] });
   }
 
   /*VERIFIE L'UTILISATEUR EN UTLISANT*/
@@ -80,31 +80,33 @@ export class FormulaireService {
 
     // Vérifier si le formulaire est rempli
     if (formulaire.status !== FormStatus.SUBMIT) {
-      throw new BadRequestException('ERROR 404: Le formulaire n\'est pas rempli');
+      throw new BadRequestException(
+        "ERROR 404: Le formulaire n'est pas rempli",
+      );
     }
 
     // Convertir les données du formulaire en objet
     const formData = {
-      'ID': formulaire.id,
+      ID: formulaire.id,
       'User ID': formulaire.user_id,
-      'Réponse': formulaire.reponse,
-      'Question': formulaire.question,
-      'Temps': formulaire.temps,
-      'Localisation': formulaire.Localisation,
-      'Signature': formulaire.signature,
-      'Entreprise': formulaire.Entreprise,
+      Réponse: formulaire.reponse,
+      Question: formulaire.question,
+      Temps: formulaire.temps,
+      Localisation: formulaire.Localisation,
+      Signature: formulaire.signature,
+      Entreprise: formulaire.Entreprise,
       'Nom du groupe': formulaire.Nom_group,
-      'Secteur d\'activité': formulaire.secteur_activite,
-      'Fonction': formulaire.fonction,
+      "Secteur d'activité": formulaire.secteur_activite,
+      Fonction: formulaire.fonction,
       'Adresse entreprise': formulaire.adresse_entreprise,
-      'Pays': formulaire.Pays,
+      Pays: formulaire.Pays,
       'Code postal': formulaire.code_postal,
-      'Ville': formulaire.ville,
+      Ville: formulaire.ville,
       'Courriel professionnel': formulaire.courriel_pro,
       'Type de contrat': formulaire.type_contrat,
-      'Mois': formulaire.mois,
+      Mois: formulaire.mois,
       'Salaire brut': formulaire.Salair_brut,
-      'Statut': formulaire.status,
+      Statut: formulaire.status,
       'Créé le': formulaire.createdAt,
       'Mis à jour le': formulaire.updatedAt,
     };
@@ -113,6 +115,6 @@ export class FormulaireService {
     const csvData = [Object.keys(formData), Object.values(formData)];
 
     // Générer le CSV à partir des données
-    return csvData.map(data => data.join(',')).join('\n');
+    return csvData.map((data) => data.join(',')).join('\n');
   }
 }

@@ -10,7 +10,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
-
+import { Formulaire } from './formulaire/entity/form.entity';
+import { FormulaireModule } from './formulaire/formulaire.module';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { MulterModule } from '@nestjs/platform-express';
         port: configService.get<number>('DB_PORT'),
         username: configService.getOrThrow<string>('DB_ROOT_USER'),
         password: configService.getOrThrow<string>('DB_ROOT_PASSWORD'),
-        database: configService.getOrThrow<string>('DB_NAME'), 
+        database: configService.getOrThrow<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: configService.getOrThrow<boolean>('DB_SYNCHRONIZE'),
       }),
@@ -51,8 +52,8 @@ import { MulterModule } from '@nestjs/platform-express';
           dir: join(__dirname, 'templates'),
           adapter: new EjsAdapter(),
           options: {
-            strict: false
-          }
+            strict: false,
+          },
         },
       }),
       inject: [ConfigService],
@@ -63,15 +64,9 @@ import { MulterModule } from '@nestjs/platform-express';
     UserModule,
     AuthModule,
     AdminModule,
+    FormulaireModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
-
-
-
-
-
-
-
+export class AppModule {}

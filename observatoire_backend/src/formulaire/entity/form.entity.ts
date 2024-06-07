@@ -6,11 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Question } from './question.entity'; // Assurez-vous que le chemin est correct
-export enum FormStatus {
-  PENDING = 'pending',
-  SUBMIT = 'submit',
-}
+import { Question } from './question.entity';
+import { FormStatus, Contrat } from '../enum'; 
+
 
 @Entity()
 export class Formulaire {
@@ -59,8 +57,8 @@ export class Formulaire {
   @Column({ type: 'varchar', length: 255, nullable: true })
   courriel_pro: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  type_contrat: string;
+  @Column({ type: 'enum', enum: Contrat, nullable: true })
+  type_contrat: Contrat;
 
   @Column({ type: 'int', nullable: true })
   mois: number;

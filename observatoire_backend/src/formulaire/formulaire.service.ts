@@ -67,6 +67,25 @@ export class FormulaireService {
     }
     return this.findOne(id);
   }
+  validateFormulaire(createFormulaireDto: Formulaire): boolean {
+    return (
+      createFormulaireDto.user_id !== null &&
+      createFormulaireDto.Localisation !== null &&
+      createFormulaireDto.signature !== null &&
+      createFormulaireDto.Entreprise !== null &&
+      createFormulaireDto.Nom_group !== null &&
+      createFormulaireDto.secteur_activite !== null &&
+      createFormulaireDto.fonction !== null &&
+      createFormulaireDto.adresse_entreprise !== null &&
+      createFormulaireDto.Pays !== null &&
+      createFormulaireDto.code_postal !== null &&
+      createFormulaireDto.ville !== null &&
+      createFormulaireDto.courriel_pro !== null &&
+      createFormulaireDto.type_contrat !== null &&
+      createFormulaireDto.mois !== null &&
+      createFormulaireDto.Salair_brut !== null
+    );
+  }
 
   async remove(id: number): Promise<void> {
     const result = await this.formulaireRepository.delete(id);

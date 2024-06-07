@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { FormStatus,Contrat } from '../enum'; 
+import { FormStatus, Contrat } from '../enum';
 
 export class CreateFormulaireDto {
   @IsNumber()
@@ -75,4 +75,6 @@ export class CreateFormulaireDto {
   @IsEnum(FormStatus)
   @IsNotEmpty()
   status: FormStatus;
+
+  
 }

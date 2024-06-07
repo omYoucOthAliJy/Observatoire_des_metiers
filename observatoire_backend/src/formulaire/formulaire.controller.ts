@@ -12,6 +12,7 @@ import {
   NotFoundException,
   HttpStatus,
   UseGuards,
+  HttpException,
 } from '@nestjs/common';
 import { FormulaireService } from './formulaire.service';
 import { CreateFormulaireDto } from './dto/create-formulaire-dto';
@@ -37,21 +38,29 @@ export class FormulaireController {
 
   //Submit quand le formulaire est complet
   @Roles(UserRole.USER)
-  @Post('submit')
+  @Post(':id/submit')
   async submitFormulaire(
-    @Body() createFormulaireDto: CreateFormulaireDto,
+    @Param('id') id: number,
+    @Body() createFormulaireDto: Formulaire,
   ): Promise<Formulaire> {
-    createFormulaireDto.status = FormStatus.SUBMIT;
-    return this.formulaireService.create(createFormulaireDto);
+    if (!this.formulaireService.validateFormulaire(createFormulaireDto)) {
+      throw new HttpException(
+        'Tous les champs du formulaire doivent être remplis.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    else{
+      createFormulaireDto.status = FormStatus.SUBMIT;
+      return this.formulaireService.update(id, createFormulaireDto);}
   }
 
-  //sauvegarde le formulaire pour finir plus tard
-  @Post('save')
+  @Post(':id/save')
   async saveFormulaire(
-    @Body() createFormulaireDto: CreateFormulaireDto,
+    @Param('id') id: number,
+    @Body() createFormulaireDto: Formulaire,
   ): Promise<Formulaire> {
     createFormulaireDto.status = FormStatus.PENDING;
-    return this.formulaireService.create(createFormulaireDto);
+    return this.formulaireService.update(id, createFormulaireDto);
   }
 
   //@Roles(UserRole.USER)

@@ -1,59 +1,110 @@
-import { Body, Controller, Post, Get, Param, Put, Delete, Query } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User } from './schema/user.schema';
-import { CreateUserDto } from './dto/create-user-dto';
-import { UpdateUserDto } from './dto/update-user-dto';
-import {Query as ExpressQuery} from 'express-serve-static-core';
+import { Body, ClassSerializerInterceptor, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { CreateUserDto } from "./dto/create-user-dto";
+import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
+import { User } from "./entity/user.entity";
+import { IdentifyUserDto } from "./dto/identify-user.dto";
+import { GetUsersDto } from "./dto/get-user-dto";
+import { GetUserByEmailDto } from "./dto/get_user_by_email.dto";
+import { UserForgotPasswordDto } from "./dto/user-forgot-password.dto";
+import { UpdateUserPasswordDto } from "./dto/update-user-password.dto";
+import { UpdateUserDto } from "./dto/update-user-dto";
+import { Question } from "./entity/question.entity";
 
-@Controller('user')
+
+
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('users')
 export class UserController {
-    constructor(private userService: UserService) {}
- 
-    @ Get()
-    async getAllUsers():Promise <User[]> {
-        return this.userService.findAll();
-    }
+  constructor(private userService: UserService) {}
 
-    @ Get('filter')
-    async getUsersByFormation(@Query() query : ExpressQuery):Promise <User[]> {
-        return this.userService.findAllByFormation(query);
-    }
+  @Post()
+  async signup(@Body() createUserDto: CreateUserDto): Promise<any> {
+    await this.userService.createUser(createUserDto);
+    return { message: 'Account created successfully.' };
+  }
 
-    @Post()
-    async createUser(
-        @Body()
-        user:CreateUserDto
-    ):Promise <User> {
-        return this.userService.create(user);
-    }
+  @UseGuards(AuthGuard('jwt_user'))
+  @Post('identification')
+  async identifyUser(@Req() request: Request, @Body() identifyUserDto: IdentifyUserDto): Promise<any> {
+    const user = request.user as User;
+    await this.userService.identifyUser(user.email, identifyUserDto);
+    return { message: 'User identified successfully.' };
+  }
 
-    @Get(':id')
-    async getUser(
-        @Param('id')
-        id:string
-    ):Promise <User> {
-        return this.userService.findById(id);
-    }
-
-    @Put(':id')
-    async updateUser(
-        @Param('id')
-        id:string,
-        @Body()
-        user:UpdateUserDto
-    ):Promise <User> {
-        return this.userService.updateById(id,user);
-    }
-
-    @Delete(':id')
-    async deleteUser(
-        @Param('id')
-        id:string
-    ):Promise <User> {
-        return this.userService.deleteById(id);
-    }
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('upload')
+  async uploadCsv(
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: true,
+        validators: [
+          new FileTypeValidator({ fileType: 'text/csv' })
+        ]
+      })
+    ) file: Express.Multer.File,
+  ): Promise<any> {
+    await this.userService.uploadCsv(file);
+    return { message: 'CSV file uploaded and processed successfully.' };
+  }
 
 
+  @UseGuards(AuthGuard('jwt_admin'))
+  @Get()
+  async getListOfUsers(@Query(ValidationPipe) getUsersDto: GetUsersDto): Promise<{data: User[], count: number}> {
+    return await this.userService.getUsersByCriteria(getUsersDto);
+  }
+
+  
+  @Get('/email')
+  async getUserByEmail(@Query(ValidationPipe) getUserByEmailDto: GetUserByEmailDto): Promise<User> {
+    return await this.userService.getUserByEmail(getUserByEmailDto);
+  }
 
 
+  @UseGuards(AuthGuard('jwt_admin'))
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<User> {
+    return await this.userService.getUserById(id);
+  }
+
+
+  @UseGuards(AuthGuard('jwt_user'))
+  @Put('/password')
+  async userUpdatePassword(@Req() request: Request,@Body() updateUserPasswordDto: UpdateUserPasswordDto): Promise<{message: string}> {
+    const user = request.user as User;
+    await this.userService.updateCurrentUserPassword(user.id, updateUserPasswordDto);
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  @Put('/forgot/password')
+  async userForgotPassword(@Body() userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
+    return await this.userService.userForgotPassword(userForgotPasswordDto);
+  }
+
+
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User | undefined> {
+    return this.userService.updateById(id, updateUserDto);
+  }
+
+
+  @UseGuards(AuthGuard('jwt_admin'))
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string): Promise<string> {
+  return this.userService.deleteById(id);
+  }
+
+
+
+  @Get('/questions') 
+  async getListOfQuestions():Promise<Question[]> {
+    return await this.userService.getQuestionsList();
+  }
 }

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"; 
-import { VariantProps, cva } from "class-variance-authority"; 
-import { FC, InputHTMLAttributes } from "react"; 
+import { VariantProps, cva } from "class-variance-authority";
+import React, { FC, InputHTMLAttributes, ReactNode } from "react"; 
 
 /**
  * Define input variants using class-variance-authority.
@@ -8,7 +8,7 @@ import { FC, InputHTMLAttributes } from "react";
  */
 const inputVariants = cva(
     // Default input styles
-    "px-4 py-2 rounded-md outline-none border-2 placeholder:text-[#616161] text-black font-light w-full", 
+    "px-4 py-2 rounded-md outline-none border-[1px] placeholder:text-[#616161] text-black font-light w-full", 
     {
         variants: {
             // Different themes for the input
@@ -31,9 +31,10 @@ interface InputProps extends
     InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof inputVariants>
 {
-    details?: string; // Details to be displayed below the input
+    details?: string | ReactNode; // Details to be displayed below the input
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
+    register?: object; // register in react hook form
 }
 
 /**
@@ -43,20 +44,22 @@ interface InputProps extends
  * @param stretched - Whether the input should stretch to fill its container.
  * @param details - Details to be displayed below the input.
  * @param error - Error message to be displayed below the input.
+ * @param register - register in react hook form
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-const Input: FC<InputProps> = ({className, theme, stretched=false, details, error,...props}) => {
+function Input({className, theme, stretched=false, details, error,...props}: InputProps, ref: any)  {
     return (
-        <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
+        <div className={`flex flex-col gap-1 ${stretched ? "w-full": "w-fit"} h-fit`}>
             {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
             <input 
                 className={cn(inputVariants({className, theme}))}
                 {...props} 
+                ref={ref}
             />
             {error && <p className="text-red-500 text-sm font-light">{error}</p>}
         </div>
     );
 }
 
-export default Input; // Export the Input component
+export default React.forwardRef(Input);

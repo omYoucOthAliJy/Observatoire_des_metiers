@@ -157,6 +157,7 @@ export default function Identification() {
                         options={civilitéOptions}
                         theme="theme2"
                         details="Civilité"
+                        detailsTextColor='white'
                         stretched
                     />
                 </div>

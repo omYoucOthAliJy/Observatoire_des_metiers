@@ -281,12 +281,13 @@ export class UserService {
         relations: {
           formation: true,
           speciality: true,
+          question: true,
         },
       });
       return user;
     } catch (error) {
       if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException('User not found: ' + error.message);
+        throw new NotFoundException('User not found');
       }
       throw new BadRequestException('Failed to fetch user: ' + error.message);
     }

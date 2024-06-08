@@ -83,6 +83,61 @@ export class UserApi {
             return {ok: false, data: {message}};
         }
     }
+
+    static async updateUserPassword(userId: string, accessToken: string, payload: {currentPassword: string, newPassword: string, confirmNewPassword: string}): Promise<{ok: boolean, data: {message?: string}}> {
+        const options = {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(payload),
+        };
+
+        const response = await fetch(`${this.baseUrl}/users/password`, options);
+        if(response.ok) {
+            return {ok: true, data: {}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
+
+    static async getUserByEmail(email: string): Promise<{ok: boolean, data: {user?: any, message?: string}}> {
+        const options = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+            },
+        };
+
+        const response = await fetch(`${this.baseUrl}/users/email?email=${email}`, options);
+        if(response.ok) {
+            const user = await response.json();
+            return {ok: true, data: {user: user}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
+
+    static async userForgotPassword(payload: {email: string, questionId: number, answer: string}) {
+        const options = {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        };
+
+        const response = await fetch(`${this.baseUrl}/users/forgot/password`, options);
+        if(response.ok) {
+            return {ok: true, data: {}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
 }
 
 

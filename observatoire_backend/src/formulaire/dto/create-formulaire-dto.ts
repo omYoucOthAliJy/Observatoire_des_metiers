@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsEnum,
   Matches,
+  IsBoolean,
 } from 'class-validator';
 import { FormStatus, Contrat } from '../enum';
 
@@ -15,7 +16,7 @@ export class CreateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Localisation?: string;
+  localisation?: string;
 
   @IsOptional()
   @IsString()
@@ -23,11 +24,11 @@ export class CreateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Entreprise?: string;
+  entreprise?: string;
 
   @IsOptional()
   @IsString()
-  Nom_group?: string;
+  nom_group?: string;
 
   @IsOptional()
   @IsString()
@@ -43,7 +44,7 @@ export class CreateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Pays?: string;
+  pays?: string;
 
   @IsOptional()
   @IsString()
@@ -58,9 +59,10 @@ export class CreateFormulaireDto {
   @IsString()
   courriel_pro?: string;
 
+  @IsOptional()
   @IsEnum(Contrat)
   @IsNotEmpty()
-  type_contrat?: Contrat;
+  type_contrat?: Contrat | null;
 
   @IsOptional()
   @IsNumber()
@@ -68,7 +70,11 @@ export class CreateFormulaireDto {
 
   @IsOptional()
   @IsNumber()
-  Salair_brut?: number;
+  salair_brut?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  embauche_cadre: boolean;
 
   @IsEnum(FormStatus)
   @IsNotEmpty()

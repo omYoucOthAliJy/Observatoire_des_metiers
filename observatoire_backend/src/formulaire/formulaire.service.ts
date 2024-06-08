@@ -37,6 +37,7 @@ export class FormulaireService {
     updateFormulaireDto: UpdateFormulaireDto,
   ): Promise<void> {
     try {
+      console.log(updateFormulaireDto)
       if (updateFormulaireDto.status == FormStatus.SUBMIT) {
         if (!this.validateFormulaire(updateFormulaireDto)) {
           throw new BadRequestException("all fields are required")
@@ -76,20 +77,20 @@ export class FormulaireService {
 
   validateFormulaire(createFormulaireDto: CreateFormulaireDto | UpdateFormulaireDto): boolean {
     return (
-      createFormulaireDto.Localisation !== null &&
+      createFormulaireDto.localisation !== null &&
       createFormulaireDto.signature !== null &&
-      createFormulaireDto.Entreprise !== null &&
-      createFormulaireDto.Nom_group !== null &&
+      createFormulaireDto.embauche_cadre !== null &&
+      createFormulaireDto.nom_group !== null &&
       createFormulaireDto.secteur_activite !== null &&
       createFormulaireDto.fonction !== null &&
       createFormulaireDto.adresse_entreprise !== null &&
-      createFormulaireDto.Pays !== null &&
+      createFormulaireDto.pays !== null &&
       createFormulaireDto.code_postal !== null &&
       createFormulaireDto.ville !== null &&
       createFormulaireDto.courriel_pro !== null &&
       createFormulaireDto.type_contrat !== null &&
-      createFormulaireDto.mois !== null &&
-      createFormulaireDto.Salair_brut !== null
+      !(createFormulaireDto.type_contrat == "CDD" && createFormulaireDto.mois !== null) &&
+      createFormulaireDto.salair_brut !== null
     );
   }
 
@@ -114,22 +115,21 @@ export class FormulaireService {
     const formData = {
       ID: formulaire.id,
       'User ID': formulaire.user_id,
-      Réponse: formulaire.reponse,
       Temps: formulaire.temps,
-      Localisation: formulaire.Localisation,
+      Localisation: formulaire.localisation,
       Signature: formulaire.signature,
-      Entreprise: formulaire.Entreprise,
-      'Nom du groupe': formulaire.Nom_group,
+      Entreprise: formulaire.entreprise,
+      'Nom du groupe': formulaire.nom_group,
       "Secteur d'activité": formulaire.secteur_activite,
       Fonction: formulaire.fonction,
       'Adresse entreprise': formulaire.adresse_entreprise,
-      Pays: formulaire.Pays,
+      Pays: formulaire.pays,
       'Code postal': formulaire.code_postal,
       Ville: formulaire.ville,
       'Courriel professionnel': formulaire.courriel_pro,
       'Type de contrat': formulaire.type_contrat,
       Mois: formulaire.mois,
-      'Salaire brut': formulaire.Salair_brut,
+      'Salaire brut': formulaire.salair_brut,
       Statut: formulaire.status,
       'Créé le': formulaire.createdAt,
       'Mis à jour le': formulaire.updatedAt,

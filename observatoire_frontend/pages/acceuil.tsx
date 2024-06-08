@@ -57,7 +57,7 @@ function Acceuil() {
       const cookieData = JSON.parse(currentUser as string)
       FormulaireApi.getListFormulairesUser(cookieData.token).then((res) => {
         if (res.ok) {
-            const formulaires = res.data.formulaires?.map((formulaire) => ({value: formulaire.id, label: formulaire.title}));
+            const formulaires = res.data.formulaires;
             setFormulaires(formulaires || []);
         }
       })
@@ -68,18 +68,41 @@ function Acceuil() {
     }
   }, [router]);
 
+  const onButtonClick = () => {
+    router.push('/formulaire');
+  }
+
+  const onClickEditListItem = (id: any) => {
+    router.push(`/formulaire/${id}`);
+  }
+
+  const onClickDeleteListItem = (id: any) => {
+    const currentUser = Cookies.get("currentUser");
+    const cookieData = JSON.parse(currentUser as string)
+    FormulaireApi.deleteFormulaire(cookieData.token, id).then((res) => {
+      if(res.ok) {
+        setFormulaires((oldList) => oldList.filter(item => item.id !== id));
+      }
+    })
+  }
+
   if (loading) {
     return null;
   }
 
   return (
     <div className="min-h-screen bg-white pb-8">
-      <Header user={{ name: `${user.firstname} ${user.lastname}`, role: "user" }} />
+      <Header user={{ id: user.id, name: `${user.firstname} ${user.lastname}`, role: "user" }} />
       <div className="lg:container flex flex-col gap-4 p-4 w-full justify-start items-center mx-auto">
         {formulaires.map(item => (
-          <ListItem key={item.id} item={item} />
+          <ListItem 
+            key={item.id} 
+            item={item} 
+            onClickEdit={() => onClickEditListItem(item.id)}
+            onClickDelete={() => onClickDeleteListItem(item.id)}
+          />
         ))}
-        <Button title='Ajouter un nouveau formulaire'>
+        <Button onClick={onButtonClick} title='Ajouter un nouveau formulaire'>
           <PlusIcon className='size-6'/>
         </Button>
       </div>

@@ -17,23 +17,20 @@ export class Formulaire {
   @Column({ type: 'varchar', nullable: false })
   user_id: string;
 
-  @Column({ type: 'text', nullable: true })
-  reponse: string;
-
   @Column({ type: 'integer', nullable: true })
   temps: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  Localisation: string;
+  localisation: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   signature: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  Entreprise: string;
+  entreprise: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  Nom_group: string;
+  nom_group: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   secteur_activite: string;
@@ -45,7 +42,7 @@ export class Formulaire {
   adresse_entreprise: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  Pays: string;
+  pays: string;
 
   @Column({ type: 'varchar', nullable: true })
   code_postal: string;
@@ -63,7 +60,10 @@ export class Formulaire {
   mois: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  Salair_brut: number;
+  salair_brut: number;
+
+  @Column({ type: 'boolean', nullable: true })
+  embauche_cadre: boolean;
 
   @Column({
     type: 'enum',

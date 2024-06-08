@@ -36,6 +36,7 @@ interface RadiosProps extends
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
     register?: object; // register in react hook form
+    detailsTextColor: "black"|"white"
 }
 
 /**
@@ -49,10 +50,10 @@ interface RadiosProps extends
  * @param props - Additional HTML input attributes.
  * @returns A React Functional Component representing a customizable input field.
  */
-function Radios({className, theme, stretched=false, options, details, error, id, ...props}: RadiosProps, ref: any) {
+function Radios({className, theme, stretched=false, options, details, error, detailsTextColor, id, ...props}: RadiosProps, ref: any) {
     return (
         <div className={`flex flex-col justify-start gap-1 ${stretched ? "w-full": "w-fit"}`}>
-            {details && <p className="text-white text-sm tracking-wide">{details}</p>}
+            {details && <p className={`text-${detailsTextColor} text-sm tracking-wide`}>{details}</p>}
             <div className="flex flex-wrap gap-4">
                 {options.map((option) => (
                     <div className="w-fit" key={option.value}>

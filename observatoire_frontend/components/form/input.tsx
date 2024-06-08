@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"; 
 import { VariantProps, cva } from "class-variance-authority";
-import React, { FC, InputHTMLAttributes } from "react"; 
+import React, { FC, InputHTMLAttributes, ReactNode } from "react"; 
 
 /**
  * Define input variants using class-variance-authority.
@@ -31,7 +31,7 @@ interface InputProps extends
     InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof inputVariants>
 {
-    details?: string; // Details to be displayed below the input
+    details?: string | ReactNode; // Details to be displayed below the input
     error?: string; // Error message to be displayed below the input
     stretched?: boolean; // Whether the input should stretch to fill its container
     register?: object; // register in react hook form

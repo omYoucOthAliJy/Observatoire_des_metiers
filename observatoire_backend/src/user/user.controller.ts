@@ -56,15 +56,16 @@ export class UserController {
     return await this.userService.getUsersByCriteria(getUsersDto);
   }
 
+  
+  @Get('/email')
+  async getUserByEmail(@Query(ValidationPipe) getUserByEmailDto: GetUserByEmailDto): Promise<User> {
+    return await this.userService.getUserByEmail(getUserByEmailDto);
+  }
+
 
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User> {
     return await this.userService.getUserById(id);
-  }
-
-  @Get('/email')
-  async getUserByEmail(@Query(ValidationPipe) getUserByEmailDto: GetUserByEmailDto): Promise<User> {
-    return await this.userService.getUserByEmail(getUserByEmailDto);
   }
 
 

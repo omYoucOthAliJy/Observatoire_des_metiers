@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup";
 import schema from '@/validators/forgot-account';
 import { useState } from 'react';
+import { UserApi } from '@/api/user.api';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,12 +17,17 @@ interface ILoginForm {
 }
 
 const Form = () => {
+    const router = useRouter();
     const [step, setStep] = useState(0);
+    const [user, setUser] = useState<any>(null);
+    const [error, setError] = useState<string|null>(null);
+
     const { 
         register, 
         handleSubmit,
         formState: { errors },
         trigger,
+        getValues,
         clearErrors
     } = useForm<ILoginForm>({
         defaultValues: {
@@ -31,18 +38,43 @@ const Form = () => {
     });
 
     const onSubmit = (data: ILoginForm) => {
-        console.log(data);
+        UserApi.userForgotPassword({
+            email: user.email,
+            questionId: user.question.id,
+            answer: data.reponse,
+        }).then((res) => {
+            if(res.ok) {
+                router.push('/login');
+            } else {
+                setError(res.data.message || null);
+            }
+        })
     };
 
     const handleFirstStep = async () => {
         const isValid = await trigger("courriel");
         if (isValid) {
             clearErrors();
-            setStep(1)
+            UserApi.getUserByEmail(getValues("courriel")).then((res) => {
+                if(res.ok) {
+                    const userData = res.data.user;
+                    if (userData.firstConnection == true) {
+                        
+                        setError("No user with that email")
+                    }else {
+                        setError(null)
+                        setUser(res.data.user);
+                        setStep(1);
+                    }
+                } else {
+                    setError(res.data.message || null)
+                }
+            })
         }
     }
     return (
         <form className='flex flex-col w-[90%]' onSubmit={handleSubmit(onSubmit)} noValidate>
+            {error != null && <div className='bg-red-600 rounded-md px-4 py-1 mb-4'><p className='text-white'>{error}</p></div>}
             {step === 0 ? (
                 <>
                     <Input
@@ -60,7 +92,7 @@ const Form = () => {
             ) : (
                 <>
                     <p className="text-center text-sm font-light mb-4">
-                        Dans quelle ville vos parents se sont-ils rencontrés ?
+                        {user.question.title}
                     </p>
                     <Input
                         theme="theme2"

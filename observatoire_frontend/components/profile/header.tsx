@@ -2,12 +2,14 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar } from '.';
+import { useRouter } from 'next/router';
+import UpdatePassword from './update-passord';
 
 /**
  * Props for the Header component.
  */
 interface HeaderProps {
-    user: { name: string, role: string, avatar?: string };
+    user: { id: string, name: string, role: string, avatar?: string };
 }
 
 /**
@@ -17,7 +19,14 @@ interface HeaderProps {
  * @returns A React Functional Component representing the header.
  */
 const Header: FC<HeaderProps> = ({ user }) => {
+    const router = useRouter();
     const [showMenu, setShowMenu] = useState(false);
+    const [showUpdatePassord, setShowUpdatePassord] = useState(false);
+
+    const onClickChangePassword = () => {
+        setShowUpdatePassord(true);
+        setShowMenu(false);
+    }
 
     return (
         <>
@@ -30,9 +39,9 @@ const Header: FC<HeaderProps> = ({ user }) => {
                     onClick={() => setShowMenu((lastState) => !lastState)}
                 />
                 {/* Logo */}
-                <Image className='h-full' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
+                <Image className='h-full cursor-pointer' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" onClick={() => router.push('/')}/>
                 {/* Avatar */}
-                <Avatar className='hidden sm:flex' name={user.name} image_link={user.avatar} />
+                <Avatar className='hidden sm:flex' name={user.name} image_link={user.avatar} showPasswordUpdate={() => setShowUpdatePassord(true)}/>
             </header>
             {/* Mobile Menu */}
             {
@@ -68,13 +77,16 @@ const Header: FC<HeaderProps> = ({ user }) => {
                                     onClick={() => setShowMenu((lastState) => !lastState)}
                                 />
                             </div>
-                            <div></div> {/* Placeholder for additional menu items */}
+                            <div className='mt-4 flex flex-col gap-4'>
+                                <div onClick={onClickChangePassword} className="px-2 py-2 text-black font-semibold text-sm cursor-pointer rounded-md bg-[#f3f3f3] hover:bg-[#e4e4e4]">Change Password</div>
+                            </div>
                         </div>
                         {/* Logout link */}
                         <Link href="/logout" className="px-4 py-2 bg-white text-[#FC9C64] rounded-md text-center">Déconnexion</Link>
                     </div>
                 </div>
             }
+            <UpdatePassword userId={user.id} showUpdatePassord={showUpdatePassord} setUpdatePassword={setShowUpdatePassord}/>
         </>
     );
 }

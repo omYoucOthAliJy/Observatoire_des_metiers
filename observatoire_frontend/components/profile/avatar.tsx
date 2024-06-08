@@ -17,6 +17,7 @@ interface AvatarProps extends
 {
     name: string; // The name to display in the avatar
     image_link?: string; // Optional link to the avatar image
+    showPasswordUpdate: any;
 }
 
 /**
@@ -27,9 +28,14 @@ interface AvatarProps extends
  * @param className - Additional CSS classes to apply to the component.
  * @returns A React Functional Component representing an avatar.
  */
-const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
+const Avatar: FC<AvatarProps> = ({name, image_link, className, showPasswordUpdate}) => {
     // State to manage whether the dropdown menu is visible or not
     const [showDropDown, setShowDropDown] = useState(false);
+
+    const onClickChangePassword = () => {
+        showPasswordUpdate();
+        setShowDropDown(false);
+    }
 
     return (
         <div className={cn(avatarVariants({className}))}>
@@ -64,6 +70,7 @@ const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
             
             {/* Display dropdown menu */}
             <div className={`absolute ${showDropDown ? "flex flex-col gap-2": "hidden"} bg-white right-0 top-[100%] mt-2 p-2 rounded-md shadow-md text-black`}>
+                <div onClick={onClickChangePassword} className="px-2 py-2 text-black font-semibold text-sm cursor-pointer rounded-md bg-[#f3f3f3] hover:bg-[#e4e4e4]">Change Password</div>
                 <Link href="/logout" className="px-4 py-2 bg-[#FC9C64] text-white rounded-md hover:bg-[#f18649]">Déconnexion</Link>
             </div>
         </div>

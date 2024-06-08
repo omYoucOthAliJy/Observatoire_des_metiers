@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsEnum, Matches, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, Matches, IsNotEmpty, IsBoolean } from 'class-validator';
 import { Contrat, FormStatus } from '../enum';
 
 export class UpdateFormulaireDto {
@@ -8,7 +8,7 @@ export class UpdateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Localisation?: string;
+  localisation?: string;
 
   @IsOptional()
   @IsString()
@@ -16,11 +16,11 @@ export class UpdateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Entreprise?: string;
+  entreprise?: string;
 
   @IsOptional()
   @IsString()
-  Nom_group?: string;
+  nom_group?: string;
 
   @IsOptional()
   @IsString()
@@ -36,7 +36,7 @@ export class UpdateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  Pays?: string;
+  pays?: string;
 
   @IsOptional()
   @IsString()
@@ -61,7 +61,11 @@ export class UpdateFormulaireDto {
 
   @IsOptional()
   @IsNumber()
-  Salair_brut?: number;
+  salair_brut?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  embauche_cadre: boolean;
 
   @IsEnum(FormStatus)
   @IsNotEmpty()

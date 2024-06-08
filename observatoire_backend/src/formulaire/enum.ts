@@ -6,4 +6,4 @@ export enum FormStatus {
 export enum Contrat {
     CDI = 'CDI',
     CDD = 'CDD',
-  }
+}

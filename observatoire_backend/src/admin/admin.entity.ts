@@ -13,15 +13,21 @@ export class Admin {
 
     @Column({
         type: "varchar",
-        nullable: true,
+        nullable: false,
     })
     firstName: string;
 
     @Column({
         type: "varchar",
-        nullable: true,
+        nullable: false,
     })
     lastName: string;
+
+    @Column({
+        type: "varchar",
+        nullable: false,
+    })
+    password: string;
 
     @Column({
         type: "boolean",

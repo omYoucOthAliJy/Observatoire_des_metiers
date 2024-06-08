@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { VariantProps, cva } from "class-variance-authority";
-import { FC, SelectHTMLAttributes } from "react";
+import React, { FC, SelectHTMLAttributes } from "react";
 
 /**
  * Define select variants using class-variance-authority.
@@ -8,7 +8,7 @@ import { FC, SelectHTMLAttributes } from "react";
  */
 const selectVariants = cva(
     // Default select styles
-    "px-4 py-2 rounded-md outline-none border-2 font-light w-full",
+    "px-4 py-2 rounded-md outline-none border-[1px] font-light w-full cursor-pointer",
     {
         variants: {
             // Different themes for the select
@@ -52,10 +52,10 @@ interface SelectProps extends
  * @param props - Additional HTML select attributes.
  * @returns A React Functional Component representing a customizable select field.
  */
-const Select: FC<SelectProps> = ({className, theme, options, register, details, error, stretched=false, placeholder, ...props}) => {
-    return <div className={`flex flex-col gap-2 ${stretched ? "w-full": "w-fit"}`}>
+function Select({className, theme, options, details, error, stretched=false, placeholder, ...props}: SelectProps, ref: any) {
+    return <div className={`flex flex-col gap-1 ${stretched ? "w-full": "w-fit"}`}>
         {details && <p className="text-[#666666] text-sm mb-1">{details}</p>}
-        <select className={cn(selectVariants({className, theme}))} {...props} {...register}>
+        <select className={cn(selectVariants({className, theme}))} {...props} ref={ref}>
             <option selected value="" className="text-black">{placeholder}</option>
             {
                 options.map((option) => (
@@ -69,4 +69,4 @@ const Select: FC<SelectProps> = ({className, theme, options, register, details, 
     </div>
 }
 
-export default Select;
+export default React.forwardRef(Select);

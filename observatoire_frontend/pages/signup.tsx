@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"; 
 import schema from '@/validators/signup';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import { UserApi } from '@/api/user.api';
+
 
 const inter = Inter({ subsets: ['latin'] }); // Initializing font
 
@@ -14,7 +19,11 @@ interface ISignUpForm {
 }
 
 // SignIn functional component
-export default function SignIn() {
+export default function Signup() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string|null>(null);
+
     const { 
         register, // Function to register inputs with react-hook-form
         handleSubmit, // Function to handle form submission with react-hook-form
@@ -27,9 +36,27 @@ export default function SignIn() {
     });
 
     // Function to handle form submission
-    const onSubmit = (data: ISignUpForm) => {
-        console.log(data); // Log form data
+    const onSubmit = async (data: ISignUpForm) => {
+        const response = await UserApi.signup(data.email);
+        if (response.ok) {
+            router.push('/login')
+        } else {
+            setError(() => response.data.message || null);
+        }
     };
+
+    useEffect(() => {
+        const currentUser = Cookies.get("currentUser");
+        if (currentUser) {
+            router.push('/');
+        } else {
+            setLoading(false);
+        }
+    }, [router]);
+
+    if (loading) {
+        return null;
+    }
 
     return (
         <main className='h-screen w-screen bg-white sm:bg-gradient-to-r from-[#FC9C64] to-[#FFBD96] flex flex-col justify-center items-center'>
@@ -47,8 +74,9 @@ export default function SignIn() {
                     </p>
                     {/* Form */}
                     <form className='flex flex-col w-full mt-16' onSubmit={handleSubmit(onSubmit)} noValidate>
+                        {error != null && <div className='bg-red-600 rounded-md w-full px-4 py-1 mb-4'><p className='text-white'>{error}</p></div>}
                         {/* Email input */}
-                        <Input className='text-sm font-normal' placeholder='Email' type='email' register={register("email", {required: true})} error={errors["email"]?.message} stretched/>
+                        <Input className='text-sm font-normal' placeholder='Email' type='email' {...register("email", {required: true})} error={errors["email"]?.message} stretched/>
                         {/* Submit button */}
                         <Button className='mt-16 text-xs' type='submit' stretched>ENVOYER</Button>
                     </form>

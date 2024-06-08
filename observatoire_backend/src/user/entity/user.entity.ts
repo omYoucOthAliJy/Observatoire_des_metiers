@@ -103,6 +103,12 @@ export class User {
   })
   country: string;
 
+  @Column({
+    type: "varchar",
+    nullable: true
+  })
+  nationality: string;
+
   @ManyToOne(() => Question, {
     eager: true,
     onDelete: "NO ACTION",

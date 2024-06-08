@@ -36,7 +36,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
             </header>
             {/* Mobile Menu */}
             {
-                showMenu && <div className='sm:hidden absolute h-full w-full bg-black bg-opacity-40'>
+                showMenu && <div className='sm:hidden absolute h-full w-full bg-black bg-opacity-40 top-0'>
                     <div className='h-full bg-[#FC9C64] w-[70%] flex flex-col justify-between p-4'>
                         <div className='flex flex-col'>
                             {/* User info */}
@@ -71,7 +71,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                             <div></div> {/* Placeholder for additional menu items */}
                         </div>
                         {/* Logout link */}
-                        <Link href="" className="px-4 py-2 bg-white text-[#FC9C64] rounded-md text-center">Déconnexion</Link>
+                        <Link href="/logout" className="px-4 py-2 bg-white text-[#FC9C64] rounded-md text-center">Déconnexion</Link>
                     </div>
                 </div>
             }

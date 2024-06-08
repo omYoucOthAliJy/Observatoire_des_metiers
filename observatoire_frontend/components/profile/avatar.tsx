@@ -64,7 +64,7 @@ const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
             
             {/* Display dropdown menu */}
             <div className={`absolute ${showDropDown ? "flex flex-col gap-2": "hidden"} bg-white right-0 top-[100%] mt-2 p-2 rounded-md shadow-md text-black`}>
-                <Link href="" className="px-4 py-2 bg-[#FC9C64] text-white rounded-md hover:bg-[#f18649]">Déconnexion</Link>
+                <Link href="/logout" className="px-4 py-2 bg-[#FC9C64] text-white rounded-md hover:bg-[#f18649]">Déconnexion</Link>
             </div>
         </div>
     );

@@ -10,6 +10,11 @@ async function bootstrap() {
     transformOptions: { enableImplicitConversion: true }, // Activation de la conversion implicite pour les types non stricts
   }));
 
+  app.enableCors({
+    origin: "*", // L'origine autorisée est définie dans une variable d'environnement
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  });
+  
   await app.listen(3000);
 }
 bootstrap();

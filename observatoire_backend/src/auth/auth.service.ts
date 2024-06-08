@@ -55,6 +55,7 @@ export class AuthService {
             email: user.email,
             formation: user.formation,
             gender: user.gender,
+            firstConnection: user.firstConnection,
         }, {
             secret: this.configService.get<string>('JWT_SECRET'),
             expiresIn: this.configService.get<string>('JWT_EXPIRE')

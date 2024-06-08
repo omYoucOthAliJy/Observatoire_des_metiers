@@ -2,7 +2,9 @@ import ListItem from '@/components/acceuil/list-item';
 import { Button } from '@/components/form';
 import { Header } from '@/components/profile';
 import { PlusIcon } from "@heroicons/react/16/solid";
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 const fakeData = [
   {
@@ -43,9 +45,28 @@ const fakeData = [
  * @returns {JSX.Element} La page d'accueil avec la liste des éléments et un bouton pour ajouter un nouveau formulaire.
  */
 function Acceuil() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>({});
+
+  useEffect(() => {
+    const currentUser = Cookies.get("currentUser");
+    if (currentUser) {
+      const cookieData = JSON.parse(currentUser as string)
+      setUser(cookieData.user)
+      setLoading(false);
+    } else {
+      router.push('/login');
+    }
+  }, [router]);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-white pb-8">
-      <Header user={{ name: "El hamri Othman", role: "user" }} />
+      <Header user={{ name: `${user.firstname} ${user.lastname}`, role: "user" }} />
       <div className="lg:container flex flex-col gap-4 p-4 w-full justify-start items-center mx-auto">
         {fakeData.map(item => (
           <ListItem key={item.id} item={item} />

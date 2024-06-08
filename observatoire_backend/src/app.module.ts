@@ -12,6 +12,8 @@ import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { Formulaire } from './formulaire/entity/form.entity';
 import { FormulaireModule } from './formulaire/formulaire.module';
+import { GlobalModule } from './global/global.module';
+
 
 @Module({
   imports: [
@@ -65,6 +67,7 @@ import { FormulaireModule } from './formulaire/formulaire.module';
     AuthModule,
     AdminModule,
     FormulaireModule,
+    GlobalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

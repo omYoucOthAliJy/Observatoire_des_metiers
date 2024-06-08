@@ -49,11 +49,11 @@ const Form = () => {
                         className="text-sm font-normal"
                         theme="theme2"
                         placeholder="Courriel"
-                        register={register("courriel", { required: true })}
+                        {...register("courriel", { required: true })}
                         error={errors["courriel"]?.message}
                         stretched
                     />
-                    <Button className="mt-16 bg-white" stretched bordered onClick={handleFirstStep}>
+                    <Button className="mt-16 bg-white border-white" stretched bordered onClick={handleFirstStep}>
                         SUIVANT
                     </Button>
                 </>
@@ -66,7 +66,7 @@ const Form = () => {
                         theme="theme2"
                         className="text-sm font-normal"
                         placeholder="Reponse"
-                        register={register("reponse", { required: true })}
+                        {...register("reponse", { required: true })}
                         error={errors["reponse"]?.message}
                         stretched
                     />
@@ -81,14 +81,14 @@ const Form = () => {
 
 
 export default function ForgotAccount() {
-    return <main className='h-screen w-screen bg-white flex flex-col justify-center items-center'>
-        <Image className='sm:hidden absolute top-0 m-10' src="sup_galilee_orange.svg" alt='sup galilée logo' width="200" height="200" />
-        <Image className='hidden sm:block sm:absolute top-0 left-0 p-4' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
-        <div className='bg-[#FC9C64] flex flex-col rounded-md p-4 items-center w-[100%] sm:w-[60%] lg:w-[30%]'>
-            <h1 className='font-bold text-center text-3xl mb-8'>Vous avez perdu vos identifiants ?</h1>
+    return <main className='h-screen w-screen bg-[#FC9C64] sm:bg-white flex flex-col justify-center items-center'>
+        <Image className='hidden sm:block sm:absolute top-0 left-0 p-4' src="sup_galilee_orange.svg" alt='sup galilée logo' width="200" height="200" />
+        <Image className='sm:hidden absolute top-0 m-10' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
+        <div className='bg-[#FC9C64] flex flex-col rounded-md p-4 items-center w-[100%] sm:w-[60%] md:w-[40%] xl:w-[30%] 2xl:w-[20%] sm:shadow-xl'>
+            <h1 className='font-bold text-center text-2xl mb-8'>Vous avez perdu vos identifiants ?</h1>
             <Form />
             <div className='flex flex-col items-center gap-1 mt-40'>
-                <Link href="#" className='text-white text-xs font-light'>Première fois ici ?</Link>
+                <Link href="/signup" className='text-white text-xs font-light'>Première fois ici ?</Link>
             </div>
         </div>
     </main>

@@ -134,6 +134,7 @@ export class UserService {
           user.speciality = speciality;
           user.date_diplome = identifyUserDto.date_diplome;
           user.gender = identifyUserDto.gender;
+          user.nationality = identifyUserDto.nationality;
           user.firstConnection = false;
 
           await entityManager.save(user);
@@ -145,10 +146,12 @@ export class UserService {
 
       return newUser;
     } catch (error) {
+      console.log(error.entityClass)
       if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException(
-          'User or related entity not found: ' + error.message,
-        );
+        if (error.entityClass == User) {
+          throw new NotFoundException('Failed to identify the user');
+        }
+        throw new NotFoundException('User or related entity not found: ' + error.message);
       }
       throw new BadRequestException(
         'Failed to identify user: ' + error.message,
@@ -508,6 +511,10 @@ export class UserService {
     }
   }
 
+  async getQuestionsList(): Promise<Question[]> {
+    return await this.entityManager.find(Question);
+  }
+
   /**
    * Generates a random password.
    * @returns A random 16-character password.
@@ -534,32 +541,4 @@ export class UserService {
   private capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
-  // async uploadCsv(filePath: string): Promise<void> {
-  //   const results = [];
-
-  //   await new Promise((resolve, reject) => {
-  //     fs.createReadStream(filePath)
-  //       .pipe(csv())
-  //       .on('data', (data) => results.push(data))
-  //       .on('end', resolve)
-  //       .on('error', reject);
-  //   });
-
-  //   for (const record of results) {
-  //     const user = new User();
-  //     user.name = record.prenom;
-  //     user.gender = record.civilite === 'M' ? 'Male' : 'Female';
-  //     user.email = record.mailPerso;
-  //     user.last_name = record.nom;
-  //     user.birthday = record.dateNaiss;
-  //     user.formation = record.specialite;
-  //     user.date_diplome = record.Anne_Obtention;
-  //     user.description = record.Derniere_Inscription;
-
-  //     await this.userRepository.save(user);
-  //   }
-
-  //   fs.unlinkSync(filePath); // Clean up uploaded file
-  // }
 }

@@ -11,6 +11,7 @@ import { GetUserByEmailDto } from "./dto/get_user_by_email.dto";
 import { UserForgotPasswordDto } from "./dto/user-forgot-password.dto";
 import { UpdateUserPasswordDto } from "./dto/update-user-password.dto";
 import { UpdateUserDto } from "./dto/update-user-dto";
+import { Question } from "./entity/question.entity";
 
 
 
@@ -80,6 +81,8 @@ export class UserController {
   async userForgotPassword(@Body() userForgotPasswordDto: UserForgotPasswordDto): Promise<void> {
     return await this.userService.userForgotPassword(userForgotPasswordDto);
   }
+
+
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
@@ -92,27 +95,12 @@ export class UserController {
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<string> {
   return this.userService.deleteById(id);
-}
+  }
 
 
 
-
-  // @Post('upload')
-  // @UseInterceptors(
-  //   FileInterceptor('file', {
-  //     storage: diskStorage({
-  //       destination: './uploads',
-  //       filename: (req, file, cb) => {
-  //         const ext = path.extname(file.originalname);
-  //         const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
-  //         cb(null, filename);
-  //       },
-  //     }),
-  //   }),
-  // )
-  // async uploadCsv(@UploadedFile() file: Express.Multer.File): Promise<any> {
-  //   await this.userService.uploadCsv(file.path);
-  //   return { message: 'File processed successfully' };
-  // }
-
+  @Get('/questions') 
+  async getListOfQuestions():Promise<Question[]> {
+    return await this.userService.getQuestionsList();
+  }
 }

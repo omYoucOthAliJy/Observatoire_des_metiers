@@ -47,7 +47,7 @@ export class IdentifyUserDto {
     specialityId: number;
 
     @IsString()
-    @Matches(/^([0-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/([0-9]{4})$/, { message: 'La date doit être au format jj/mm/aaaa' })
+    @Matches(/^([0-9]{4})$/, { message: 'La date doit être au format jj/mm/aaaa' })
     @IsNotEmpty()
     date_diplome: string;
 
@@ -69,6 +69,11 @@ export class IdentifyUserDto {
     @IsNotEmpty()
     @Transform(({ value }) => value.toLowerCase())
     country: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @Transform(({ value }) => value.toLowerCase())
+    nationality;
 
     @IsNumber()
     @IsNotEmpty()

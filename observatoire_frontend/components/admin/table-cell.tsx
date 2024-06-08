@@ -1,17 +1,11 @@
-import { FC, PropsWithChildren } from "react"
+import { FC, PropsWithChildren } from "react";
 
 interface TableCellProps extends PropsWithChildren {
-  className?: string
+  className?: string;
 }
 
 const TableCell: FC<TableCellProps> = ({ className, children }) => {
-  return (
-    <td>
-      <div className={`mt-4 bg-[#F0EEF2] p-2 ${className}`}>
-        {children}
-      </div>
-    </td>
-  );
+  return <div className={className}>{children}</div>;
 };
 
 export default TableCell;

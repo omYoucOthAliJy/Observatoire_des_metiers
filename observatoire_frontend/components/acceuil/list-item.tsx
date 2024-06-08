@@ -42,9 +42,6 @@ const ListItem: FC<ListItemProps> = ({ item, onClickEdit, onClickDelete }) => (
           <button onClick={onClickEdit} className="w-8 h-8 flex items-center justify-center bg-[#3E1F94] rounded-full" title="Modifier le formulaire">
             <PencilIcon className="size-4" />
           </button>
-          <button className="w-8 h-8 ml-2 flex items-center justify-center bg-[#1F944E] rounded-full" title="Envoyer le formulaire">
-            <CheckIcon className="size-4" />
-          </button>
           <button onClick={onClickDelete} className="w-8 h-8 ml-2 flex items-center justify-center bg-[#D71A1A] rounded-full" title="Supprimer le formulaire">
             <TrashIcon className="size-4" />
           </button>

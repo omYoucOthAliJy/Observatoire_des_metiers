@@ -39,7 +39,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                     onClick={() => setShowMenu((lastState) => !lastState)}
                 />
                 {/* Logo */}
-                <Image className='h-full cursor-pointer' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" onClick={() => router.push('/')}/>
+                <Image className='h-full cursor-pointer' src="../sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" onClick={() => router.push('/')}/>
                 {/* Avatar */}
                 <Avatar className='hidden sm:flex' name={user.name} image_link={user.avatar} showPasswordUpdate={() => setShowUpdatePassord(true)}/>
             </header>

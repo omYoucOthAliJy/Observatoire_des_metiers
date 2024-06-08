@@ -19,4 +19,22 @@ export class AuthApi {
             return {ok: false, data: {message}};
         }
     }
+
+
+    static async adminLogin(email: string, password: string): Promise<{ok: boolean, data: {token?: string, admin?: any, message?: string}}> {
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        };
+        const response = await fetch(`${this.baseUrl}/auth/admin/login`, options);
+        if(response.ok) {
+            const { token } = await response.json();
+            const admin = await jwtDecode(token);
+            return {ok: true, data: {token, admin}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
 }

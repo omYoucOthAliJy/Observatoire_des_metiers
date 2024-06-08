@@ -44,7 +44,8 @@ export default function Login() {
     const onSubmit = async (data: ILoginForm) => {
         const response = await AuthApi.login(data.email, data.password);
         if (response.ok) {
-            Cookies.set("currentUser", JSON.stringify(response.data));
+            const cookieExpirationTime = new Date((response.data.user.exp-4) * 1000);
+            Cookies.set("currentUser", JSON.stringify(response.data),{expires: cookieExpirationTime});
             if (response.data.user?.firstConnection) {
                 router.push('/identification');
             } else {

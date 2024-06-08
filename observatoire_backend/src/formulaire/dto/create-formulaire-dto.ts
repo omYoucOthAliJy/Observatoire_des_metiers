@@ -61,8 +61,7 @@ export class CreateFormulaireDto {
 
   @IsOptional()
   @IsEnum(Contrat)
-  @IsNotEmpty()
-  type_contrat?: Contrat | null;
+  type_contrat?: Contrat | undefined;
 
   @IsOptional()
   @IsNumber()

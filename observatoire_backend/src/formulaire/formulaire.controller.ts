@@ -65,18 +65,26 @@ export class FormulaireController {
     return this.formulaireService.findUserFormulaire(user.id);
   }
 
+  @UseGuards(AuthGuard('jwt_admin'))
+  @Get('/user/id')
+  async getUserFormulaires(@Param('id') id: string): Promise<Formulaire[]> {
+    return this.formulaireService.findUserFormulaire(id);
+  }
   
+  @UseGuards(AuthGuard('jwt_admin'))
   @Get('/admin')
   async findAll(): Promise<Formulaire[]> {
     return this.formulaireService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Get(':id')
   async findOne(@Param('id') id: number, @Req() request: Request) {
     const user = request.user; // Utilisateur extrait du JWT
     return this.formulaireService.findOne(id);
   }
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Get(':id/csv')
   async exportToCsv(
     @Param('id') id: number,

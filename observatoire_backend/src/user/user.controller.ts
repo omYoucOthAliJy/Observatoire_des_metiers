@@ -51,6 +51,7 @@ export class UserController {
   }
 
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Get()
   async getListOfUsers(@Query(ValidationPipe) getUsersDto: GetUsersDto): Promise<{data: User[], count: number}> {
     return await this.userService.getUsersByCriteria(getUsersDto);
@@ -63,6 +64,7 @@ export class UserController {
   }
 
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User> {
     return await this.userService.getUserById(id);
@@ -92,7 +94,8 @@ export class UserController {
     return this.userService.updateById(id, updateUserDto);
   }
 
-  //@Roles(UserRole.ADMIN)
+
+  @UseGuards(AuthGuard('jwt_admin'))
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<string> {
   return this.userService.deleteById(id);

@@ -59,6 +59,12 @@ export class User {
   })
   birthCountry: string;
 
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
+  nationality: string;
+
   @ManyToOne(() => Formation, {
     eager: true,
     onDelete: "NO ACTION",
@@ -103,12 +109,6 @@ export class User {
   })
   country: string;
 
-  @Column({
-    type: "varchar",
-    nullable: true
-  })
-  nationality: string;
-
   @ManyToOne(() => Question, {
     eager: true,
     onDelete: "NO ACTION",
@@ -146,5 +146,5 @@ export class User {
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);
-}
+  }
 }

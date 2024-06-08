@@ -51,20 +51,20 @@ const Avatar: FC<AvatarProps> = ({name, image_link, className}) => {
                     className="w-14 h-14 rounded-full bg-white cursor-pointer flex flex-col justify-center items-center p-1 overflow-hidden"
                     onClick={() => setShowDropDown((lastValue) => !lastValue)}
                 > 
-                    <Image src="/images/profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20"/> 
+                    <Image src="profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20"/> 
                 </div>
             }
 
             {/* Display dropdown arrow */}
             {showDropDown ? 
-                <Image src="/images/up-arrow.svg" alt="up arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
+                <Image src="up-arrow.svg" alt="up arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
                 :
-                <Image src="/images/down-arrow.svg" alt="down arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
+                <Image src="down-arrow.svg" alt="down arrow" width="20" height="20" onClick={() => setShowDropDown((lastValue) => !lastValue)}/>
             }
             
             {/* Display dropdown menu */}
             <div className={`absolute ${showDropDown ? "flex flex-col gap-2": "hidden"} bg-white right-0 top-[100%] mt-2 p-2 rounded-md shadow-md text-black`}>
-                <Link href="" className="px-4 py-2 bg-[#FC9C64] text-white rounded-md hover:bg-[#f18649]">Déconnexion</Link>
+                <Link href="/logout" className="px-4 py-2 bg-[#FC9C64] text-white rounded-md hover:bg-[#f18649]">Déconnexion</Link>
             </div>
         </div>
     );

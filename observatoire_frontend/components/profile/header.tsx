@@ -22,21 +22,21 @@ const Header: FC<HeaderProps> = ({ user }) => {
     return (
         <>
             {/* Header */}
-            <header className='flex flex-row justify-between items-center w-full bg-[#FC9C64] py-2 px-4 sticky top-0'>
+            <header className='flex flex-row justify-between items-center w-full bg-[#FC9C64] py-2 px-4'>
                 {/* Menu icon */}
                 <Image
                     className='h-full sm:hidden cursor-pointer'
-                    src="/images/menu.svg" alt='menu logo' width="40" height="40"
+                    src="menu.svg" alt='menu logo' width="40" height="40"
                     onClick={() => setShowMenu((lastState) => !lastState)}
                 />
                 {/* Logo */}
-                <Image className='h-full' src="/images/sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
+                <Image className='h-full' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
                 {/* Avatar */}
                 <Avatar className='hidden sm:flex' name={user.name} image_link={user.avatar} />
             </header>
             {/* Mobile Menu */}
             {
-                showMenu && <div className='sm:hidden absolute h-full w-full bg-black bg-opacity-40'>
+                showMenu && <div className='sm:hidden absolute h-full w-full bg-black bg-opacity-40 top-0'>
                     <div className='h-full bg-[#FC9C64] w-[70%] flex flex-col justify-between p-4'>
                         <div className='flex flex-col'>
                             {/* User info */}
@@ -55,7 +55,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                                         <div
                                             className="w-14 h-14 rounded-full bg-white cursor-pointer flex flex-col justify-center items-center p-1 overflow-hidden"
                                         >
-                                            <Image src="/images/profile_image.svg" className="w-[80%] h-[80%]" alt="user avatar" width="20" height="20" />
+                                            <Image src="profile_image.svg" className="w-[80%] h-[80%]" alt="down arrow" width="20" height="20" />
                                         </div>
                                     }
                                     {/* User name */}
@@ -64,14 +64,14 @@ const Header: FC<HeaderProps> = ({ user }) => {
                                 {/* Close Menu icon */}
                                 <Image
                                     className='h-fullcursor-pointer'
-                                    src="/images/close_menu.svg" alt='menu logo' width="30" height="30"
+                                    src="close_menu.svg" alt='menu logo' width="30" height="30"
                                     onClick={() => setShowMenu((lastState) => !lastState)}
                                 />
                             </div>
                             <div></div> {/* Placeholder for additional menu items */}
                         </div>
                         {/* Logout link */}
-                        <Link href="" className="px-4 py-2 bg-white text-[#FC9C64] rounded-md text-center">Déconnexion</Link>
+                        <Link href="/logout" className="px-4 py-2 bg-white text-[#FC9C64] rounded-md text-center">Déconnexion</Link>
                     </div>
                 </div>
             }

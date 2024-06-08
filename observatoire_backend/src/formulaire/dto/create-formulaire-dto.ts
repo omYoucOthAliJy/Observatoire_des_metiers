@@ -4,14 +4,11 @@ import {
   IsNumber,
   IsOptional,
   IsEnum,
+  Matches,
 } from 'class-validator';
 import { FormStatus, Contrat } from '../enum';
 
 export class CreateFormulaireDto {
-  @IsNumber()
-  @IsNotEmpty()
-  user_id: number;
-
   @IsOptional()
   @IsNumber()
   temps?: number;
@@ -49,8 +46,9 @@ export class CreateFormulaireDto {
   Pays?: string;
 
   @IsOptional()
-  @IsNumber()
-  code_postal?: number;
+  @IsString()
+  @Matches(/^[0-9]{5}$/, { message: 'Le code postal doit être exactement 5 chiffres' })
+  code_postal?: string;
 
   @IsOptional()
   @IsString()
@@ -74,7 +72,5 @@ export class CreateFormulaireDto {
 
   @IsEnum(FormStatus)
   @IsNotEmpty()
-  status: FormStatus;
-
-  
+  status: FormStatus; 
 }

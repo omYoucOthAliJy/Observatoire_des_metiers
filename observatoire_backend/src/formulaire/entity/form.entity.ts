@@ -6,22 +6,21 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Question } from './question.entity';
 import { FormStatus, Contrat } from '../enum'; 
 
 
 @Entity()
 export class Formulaire {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'int' })
-  user_id: number;
+  @Column({ type: 'varchar', nullable: false })
+  user_id: string;
 
   @Column({ type: 'text', nullable: true })
   reponse: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'integer', nullable: true })
   temps: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -48,8 +47,8 @@ export class Formulaire {
   @Column({ type: 'varchar', length: 255, nullable: true })
   Pays: string;
 
-  @Column({ type: 'int', nullable: true })
-  code_postal: number;
+  @Column({ type: 'varchar', nullable: true })
+  code_postal: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   ville: string;
@@ -60,7 +59,7 @@ export class Formulaire {
   @Column({ type: 'enum', enum: Contrat, nullable: true })
   type_contrat: Contrat;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'integer', nullable: true })
   mois: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
@@ -79,6 +78,7 @@ export class Formulaire {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @ManyToOne(() => Question, (question) => question.formulaires)
-  question: Question;
+  constructor(formulaire: Partial<Formulaire>) {
+    Object.assign(this, formulaire);
+  }
 }

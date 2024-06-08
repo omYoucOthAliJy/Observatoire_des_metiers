@@ -4,9 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, EntityManager, EntityNotFoundError } from 'typeorm';
-import { User } from './entity/user.entity'; // conflict
+import { EntityManager, EntityNotFoundError } from 'typeorm';
+import { User } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUsersDto } from './dto/get-user-dto';
 
@@ -22,9 +21,6 @@ import { Question } from './entity/question.entity';
 import { GetUserByEmailDto } from './dto/get_user_by_email.dto';
 import { UserForgotPasswordDto } from './dto/user-forgot-password.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-
-import * as csv from 'csv-parser';
-import * as fs from 'fs';
 import { UpdateUserDto } from './dto/update-user-dto';
 
 @Injectable()

@@ -16,7 +16,7 @@ import { FormulaireModule } from './formulaire/formulaire.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
+      envFilePath: ['../.env'],
       isGlobal: true,
       cache: true,
     }),

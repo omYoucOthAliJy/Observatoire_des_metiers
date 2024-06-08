@@ -12,90 +12,68 @@ import {
   NotFoundException,
   HttpStatus,
   UseGuards,
-  HttpException,
 } from '@nestjs/common';
 import { FormulaireService } from './formulaire.service';
 import { CreateFormulaireDto } from './dto/create-formulaire-dto';
 import { UpdateFormulaireDto } from './dto/update-formulaire-dto';
 import { Formulaire } from './entity/form.entity';
-import { FormStatus } from './enum';
 import { Roles, UserRole } from 'src/user/roles/roles.decorator';
-import { Request } from 'express';
+import { Response, Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entity/user.entity';
 
-import { Response } from 'express';
 
-//@UseGuards(JwtAuthGuard)
 @Controller('formulaires')
 export class FormulaireController {
   constructor(private readonly formulaireService: FormulaireService) {}
 
+  @UseGuards(AuthGuard('jwt-user'))
   @Post()
-  async createFormulaire(
+  async createUserFormulaire(
+    @Req() request: Request,
     @Body() createFormulaireDto: CreateFormulaireDto,
   ): Promise<Formulaire> {
-    return this.formulaireService.create(createFormulaireDto);
+    const user = request.user as User;
+    return this.formulaireService.create(user.id, createFormulaireDto);
   }
 
-  //Submit quand le formulaire est complet
-  @Roles(UserRole.USER)
-  @Post(':id/submit')
-  async submitFormulaire(
+  @UseGuards(AuthGuard('jwt-user'))
+  @Put(':id')
+  async update(
+    @Req() request: Request,
     @Param('id') id: number,
-    @Body() createFormulaireDto: Formulaire,
-  ): Promise<Formulaire> {
-    if (!this.formulaireService.validateFormulaire(createFormulaireDto)) {
-      throw new HttpException(
-        'Tous les champs du formulaire doivent être remplis.',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    else{
-      createFormulaireDto.status = FormStatus.SUBMIT;
-      return this.formulaireService.update(id, createFormulaireDto);}
+    @Body() updateFormulaireDto: UpdateFormulaireDto,
+  ): Promise<void> {
+    const user = request.user as User;
+    return this.formulaireService.update(user.id, id, updateFormulaireDto);
   }
 
-  @Post(':id/save')
-  async saveFormulaire(
-    @Param('id') id: number,
-    @Body() createFormulaireDto: Formulaire,
-  ): Promise<Formulaire> {
-    createFormulaireDto.status = FormStatus.PENDING;
-    return this.formulaireService.update(id, createFormulaireDto);
+  @UseGuards(AuthGuard('jwt-user'))
+  @Delete(':id')
+  async remove(@Req() request: Request, @Param('id') id: number): Promise<void> {
+    const user = request.user as User;
+    return this.formulaireService.remove(user.id, id);
   }
 
-  //@Roles(UserRole.USER)
+  @UseGuards(AuthGuard('jwt-user'))
   @Get()
+  async getAllUserFormulaire(@Req() request: Request, @Param('id') id: number): Promise<Formulaire[]> {
+    const user = request.user as User;
+    return this.formulaireService.findUserFormulaire(user.id);
+  }
+
+  
+  @Get('/admin')
   async findAll(): Promise<Formulaire[]> {
     return this.formulaireService.findAll();
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
-  // @Get(':id')
-  // async findOne(@Param('id') id: number): Promise<Formulaire> {
-  //   return this.formulaireService.findOne(id);
-  // }
-
-  /* UTILISE POUR VERIFIER L'UTILISATEUR */
   @Get(':id')
   async findOne(@Param('id') id: number, @Req() request: Request) {
     const user = request.user; // Utilisateur extrait du JWT
-    return this.formulaireService.findOne(id, user);
+    return this.formulaireService.findOne(id);
   }
 
-  @Roles(UserRole.ADMIN, UserRole.USER)
-  @Put(':id')
-  async update(
-    @Param('id') id: number,
-    @Body() updateFormulaireDto: UpdateFormulaireDto,
-  ): Promise<Formulaire> {
-    return this.formulaireService.update(id, updateFormulaireDto);
-  }
-
-  @Roles(UserRole.USER)
-  @Delete(':id')
-  async remove(@Param('id') id: number): Promise<void> {
-    return this.formulaireService.remove(id);
-  }
   @Get(':id/csv')
   async exportToCsv(
     @Param('id') id: number,

@@ -5,71 +5,77 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, EntityNotFoundError, Repository } from 'typeorm';
 import { Formulaire } from './entity/form.entity';
 import { CreateFormulaireDto } from './dto/create-formulaire-dto';
 import { UpdateFormulaireDto } from './dto/update-formulaire-dto';
 import { FormStatus } from './enum';
-import * as csvParser from 'csv-parser';
-import * as fs from 'fs';
 
 @Injectable()
 export class FormulaireService {
   constructor(
     @InjectRepository(Formulaire)
     private formulaireRepository: Repository<Formulaire>,
+    private readonly entityManager: EntityManager,
   ) {}
 
-  async create(createFormulaireDto: CreateFormulaireDto): Promise<Formulaire> {
-    const formulaire = this.formulaireRepository.create(createFormulaireDto);
-    return await this.formulaireRepository.save(formulaire);
+  async create(user_id: string, createFormulaireDto: CreateFormulaireDto): Promise<Formulaire> {
+    if (createFormulaireDto.status == FormStatus.SUBMIT) {
+      if (!this.validateFormulaire(createFormulaireDto)) {
+        throw new BadRequestException("all fields are required")
+      }
+    } 
+    const formulaire = new Formulaire({...createFormulaireDto, user_id: user_id});
+    await this.formulaireRepository.save(formulaire);
+
+    return formulaire;
+  }
+
+  async update(
+    user_id: string,
+    id: number,
+    updateFormulaireDto: UpdateFormulaireDto,
+  ): Promise<void> {
+    try {
+      if (updateFormulaireDto.status == FormStatus.SUBMIT) {
+        if (!this.validateFormulaire(updateFormulaireDto)) {
+          throw new BadRequestException("all fields are required")
+        }
+      } 
+      const result = await this.entityManager.update(Formulaire, {id, user_id}, updateFormulaireDto);
+
+      if (result.affected < 1) {
+        throw new NotFoundException('Formulaire not found');
+      }
+
+      return;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async findUserFormulaire(user_id: string): Promise<Formulaire[]> {
+    return await this.entityManager.findBy(Formulaire, {user_id});
   }
 
   async findAll(): Promise<Formulaire[]> {
-    return await this.formulaireRepository.find({ relations: ['question'] });
+    return await this.formulaireRepository.find();
   }
 
-  /*VERIFIE L'UTILISATEUR EN UTLISANT*/
-  async findOne(id: number, user?: any): Promise<Formulaire> {
+  async findOne(id: number): Promise<Formulaire> {
     const formulaire = await this.formulaireRepository.findOneBy({ id });
 
     if (!formulaire) {
       throw new NotFoundException('Formulaire not found');
     }
 
-    if (user && !user.isAdmin && formulaire.user_id !== user.id) {
-      throw new UnauthorizedException(
-        'You are not authorized to access this formulaire',
-      );
-    }
-
     return formulaire;
   }
 
-  // async findOne(id: number): Promise<Formulaire> {
-  //   const formulaire = await this.formulaireRepository.findOneBy({ id });
-  //   if (!formulaire) {
-  //     throw new NotFoundException('Formulaire not found');
-  //   }
-  //   return formulaire;
-  // }
+  
 
-  async update(
-    id: number,
-    updateFormulaireDto: UpdateFormulaireDto,
-  ): Promise<Formulaire> {
-    const updateResult = await this.formulaireRepository.update(
-      id,
-      updateFormulaireDto,
-    );
-    if (updateResult.affected === 0) {
-      throw new NotFoundException(`Formulaire with ID ${id} not found`);
-    }
-    return this.findOne(id);
-  }
-  validateFormulaire(createFormulaireDto: Formulaire): boolean {
+  validateFormulaire(createFormulaireDto: CreateFormulaireDto | UpdateFormulaireDto): boolean {
     return (
-      createFormulaireDto.user_id !== null &&
       createFormulaireDto.Localisation !== null &&
       createFormulaireDto.signature !== null &&
       createFormulaireDto.Entreprise !== null &&
@@ -87,8 +93,8 @@ export class FormulaireService {
     );
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.formulaireRepository.delete(id);
+  async remove(user_id: string, id: number): Promise<void> {
+    const result = await this.entityManager.delete(Formulaire, {user_id, id});
     if (result.affected === 0) {
       throw new NotFoundException('Formulaire not found');
     }
@@ -109,7 +115,6 @@ export class FormulaireService {
       ID: formulaire.id,
       'User ID': formulaire.user_id,
       Réponse: formulaire.reponse,
-      Question: formulaire.question,
       Temps: formulaire.temps,
       Localisation: formulaire.Localisation,
       Signature: formulaire.signature,

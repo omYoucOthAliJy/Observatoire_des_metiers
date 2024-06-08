@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"; 
-import { VariantProps, cva } from "class-variance-authority"; 
+import { VariantProps, cva } from "class-variance-authority";
 import React, { FC, InputHTMLAttributes } from "react"; 
 
 /**

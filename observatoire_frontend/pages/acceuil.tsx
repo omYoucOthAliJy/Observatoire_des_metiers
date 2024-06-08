@@ -5,6 +5,7 @@ import { PlusIcon } from "@heroicons/react/16/solid";
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
+import { FormulaireApi } from '@/api/formulaire.api';
 
 const fakeData = [
   {
@@ -48,11 +49,18 @@ function Acceuil() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>({});
+  const [formulaires, setFormulaires] = useState<any[]>([]);
 
   useEffect(() => {
     const currentUser = Cookies.get("currentUser");
     if (currentUser) {
       const cookieData = JSON.parse(currentUser as string)
+      FormulaireApi.getListFormulairesUser(cookieData.token).then((res) => {
+        if (res.ok) {
+            const formulaires = res.data.formulaires?.map((formulaire) => ({value: formulaire.id, label: formulaire.title}));
+            setFormulaires(formulaires || []);
+        }
+      })
       setUser(cookieData.user)
       setLoading(false);
     } else {
@@ -68,7 +76,7 @@ function Acceuil() {
     <div className="min-h-screen bg-white pb-8">
       <Header user={{ name: `${user.firstname} ${user.lastname}`, role: "user" }} />
       <div className="lg:container flex flex-col gap-4 p-4 w-full justify-start items-center mx-auto">
-        {fakeData.map(item => (
+        {formulaires.map(item => (
           <ListItem key={item.id} item={item} />
         ))}
         <Button title='Ajouter un nouveau formulaire'>

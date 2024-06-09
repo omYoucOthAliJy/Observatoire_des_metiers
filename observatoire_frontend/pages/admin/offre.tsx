@@ -1,33 +1,34 @@
-import ListItem from "@/components/admin/list-item";
+import Pagination from "@/components/admin/pagination";
+import TableCell from "@/components/admin/table-cell";
+import TableHead from "@/components/admin/table-head";
+import TableRow from "@/components/admin/table-row";
 import { Button } from "@/components/form";
+import Input from "@/components/form/input";
+import Select from "@/components/form/select";
 import SideBar from "@/components/profile/Sidebar";
-import { PlusIcon } from "@heroicons/react/16/solid";
+import Image from "next/image";
+import Link from "next/link";
 
-const fakeData = [
+const columns = [
   {
-    id: 1,
-    entreprise: "SQLI",
-    position: "Software Engineer"
+    title: "Fonction",
+    className: "col-span-3 font-bold"
   },
   {
-    id: 2,
-    entreprise: "Capgemini",
-    position: "Software Engineer"
+    title: "Entreprise",
+    className: "col-span-2 font-bold"
   },
   {
-    id: 3,
-    entreprise: "Atos",
-    position: "Software Engineer"
+    title: "Description",
+    className: "col-span-4 font-bold"
   },
   {
-    id: 4,
-    entreprise: "SII",
-    position: "Software Engineer"
+    title: "Lien",
+    className: "col-span-1 font-bold"
   },
   {
-    id: 5,
-    entreprise: "Idemia",
-    position: "Software Engineer"
+    title: "",
+    className: "col-span-2 font-bold"
   },
 ]
 
@@ -35,15 +36,55 @@ export default function Offre() {
   return (
     <div className="min-h-screen bg-white flex items-stretch">
       <SideBar />
-      <div className="lg:container text-black p-8 mt-16">
-        <h1 className='text-[#FC9C64] text-2xl font-bold text-center md:text-start mb-4'>Offres d'emploi</h1>
-        <div className=" flex flex-col gap-4 w-full justify-start items-center mx-auto">
-          {fakeData.map(item => (
-            <ListItem key={item.id} item={item} />
-          ))}
-          <Button title='Ajouter une nouveau offre'>
-            <PlusIcon className='size-6'/>
-          </Button>
+      <div className="lg:container text-black p-8 mt-16 flex items-start justify-center mx-auto">
+        <div className="w-full">
+          <div className="flex justify-end">
+            <Button onClick={() => {}}>
+              Ajouter
+            </Button>
+          </div>
+          <div className="mt-4">
+            <TableHead columns={columns} className="gap-4" />
+            <TableRow className="items-center gap-4">
+              <TableCell className="col-span-3">Software Engineer</TableCell>
+              <TableCell className="col-span-2">Idemia</TableCell>
+              <TableCell className="col-span-4">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Expedita, iure animi incidunt ad suscipit facilis veniam voluptate asperiores ducimus voluptatem, quis vero ipsam in accusantium quam fuga enim? Quo, tempore.</TableCell>
+              <TableCell className="col-span-1">
+                <Link href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Postuler ici</Link>
+              </TableCell>
+              <TableCell className="col-span-2">
+                <div className="flex gap-4 items-center justify-end">
+                  <div
+                    role="button"
+                    onClick={() => {}}
+                    className="w-6 h-6 flex items-center"
+                  >
+                    <Image
+                      alt="modifier"
+                      src="/modify_admin.svg"
+                      width={16}
+                      height={16}
+                    />
+                  </div>
+                  <div
+                    role="button"
+                    onClick={() => {}}
+                    className="w-6 h-6 flex items-center"
+                  >
+                    <Image
+                      alt="modifier"
+                      src="/delete_admin.svg"
+                      width={16}
+                      height={16}
+                    />
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
+          </div>
+          <div className="flex justify-center">
+            <Pagination />
+          </div>
         </div>
       </div>
     </div>

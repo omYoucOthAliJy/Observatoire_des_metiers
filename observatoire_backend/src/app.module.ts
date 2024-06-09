@@ -10,15 +10,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
-import { Formulaire } from './formulaire/entity/form.entity';
 import { FormulaireModule } from './formulaire/formulaire.module';
-import { GlobalModule } from './global/global.module';
-
+import { EmploiModule } from './emploi/emploi.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['../.env'],
+      envFilePath: ['.env'],
       isGlobal: true,
       cache: true,
     }),
@@ -67,7 +65,7 @@ import { GlobalModule } from './global/global.module';
     AuthModule,
     AdminModule,
     FormulaireModule,
-    GlobalModule,
+    EmploiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

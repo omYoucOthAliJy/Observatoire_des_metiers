@@ -42,7 +42,7 @@ export default function Diplome() {
     <div className="min-h-screen bg-white flex items-stretch">
       <SideBar />
       <div className="lg:container text-black p-8 mt-16 flex items-start justify-center mx-auto">
-        <div>
+        <div className="w-full">
           <div className="bg-[#F0EEF2] flex gap-4 p-4 rounded-lg items-end">
             <Input
               details="Rechercher:"
@@ -76,7 +76,7 @@ export default function Diplome() {
               </Button>
             </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-8 w-full">
             <TableHead columns={columns} />
             <TableRow>
               <TableCell className="col-span-3">El hamri Othman</TableCell>

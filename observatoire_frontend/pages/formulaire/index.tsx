@@ -133,7 +133,7 @@ export default function FormulaireQuestionnaire() {
                                 error={errors.mois?.message as string}
                                 {...register('mois')}
                                 theme="theme3"
-                                details={<>Combien de temps avez-mis pour trouver votre 1er emploi en <br/>(à partir de l'obtention de votre diplôme)</>}
+                                details={<>Combien de temps avez-mis pour trouver votre 1er emploi en <br/>(à partir de l&apos;obtention de votre diplôme)</>}
                                 placeholder='Mois'
                                 stretched
                             />

@@ -140,7 +140,7 @@ export default function Identification() {
         <Image className='md:hidden absolute top-0 m-10' src="sup_galilee_white.svg" alt='sup galilée logo' width="200" height="200" />
         <div className='bg-[#FC9C64] mb-20 mt-40 md:my-4 h-fit flex flex-col rounded-md items-center w-[100%] xl:w-[60%] md:shadow-lg p-2 md:pb-4 md:pt-8'>
             <h1 className='text-white text-2xl font-bold text-start md:text-start self-start px-2'>Identification</h1>
-            <h2 className='w-[85%] text-white text-base font-normal text-start md:text-start self-start px-2'>Afin d'accéder au questionnaire, Veuillez remplire ls champs exactement tels qu'il apparaissent sur votre carte d'etudiant, ainsi que l'année exacte de votre diplôme</h2>
+            <h2 className='w-[85%] text-white text-base font-normal text-start md:text-start self-start px-2'>Afin d&apos;accéder au questionnaire, Veuillez remplire ls champs exactement tels qu&apos;il apparaissent sur votre carte d&apos;etudiant, ainsi que l&apos;année exacte de votre diplôme</h2>
             {error != null && <div className='bg-red-600 rounded-md w-full px-4 py-1 mb-4'><p className='text-white'>{error}</p></div>}
             <form 
                 className='text-black flex flex-wrap justify-stretch items-end mt-8 gap-y-4'

@@ -11,10 +11,11 @@ async function bootstrap() {
   }));
 
   app.enableCors({
-    origin: "*", // L'origine autorisée est définie dans une variable d'environnement
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: ['http://localhost:3000'], // Allowed origin
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"], // Allowed methods
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   });
   
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();

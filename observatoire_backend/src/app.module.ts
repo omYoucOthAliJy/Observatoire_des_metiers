@@ -11,8 +11,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { FormulaireModule } from './formulaire/formulaire.module';
-import { GlobalModule } from './global/global.module';
-
+import { EmploiModule } from './emploi/emploi.module';
 
 @Module({
   imports: [
@@ -65,7 +64,7 @@ import { GlobalModule } from './global/global.module';
     AuthModule,
     AdminModule,
     FormulaireModule,
-    GlobalModule,
+    EmploiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

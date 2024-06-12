@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "../../form";
 import NavItem from "./nav-item";
-
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 const menu = [
   {
     key: "home",
@@ -14,13 +14,13 @@ const menu = [
     key: "diplome",
     label: "Diplomés",
     path: "/admin/diplome",
-    icon: (selected: boolean) => selected ? "/admin_home_orange.svg" : "/admin_home_white.svg" 
+    icon: (selected: boolean) => selected ? "/diplome_orange.svg" : "/diplome_white.svg" 
   },
   {
     key: "offre",
     label: "Offre d'emploi",
     path: "/admin/offre",
-    icon: (selected: boolean) => selected ? "/admin_home_orange.svg" : "/admin_home_white.svg" 
+    icon: (selected: boolean) => selected ? "/offre_orange.svg" : "/offre_white.svg" 
   }
 ]
 
@@ -30,6 +30,11 @@ const itemStyle = {
 }
 
 export default function SideBar() {
+  const router = useRouter()
+  const logout = () => {
+    Cookies.remove("currentAdmin")
+    router.push("/admin/login")
+  }
   return (
     <div className="w-64 bg-[#FC9C64] flex flex-col">
       <div className="p-4 mb-16">
@@ -47,7 +52,7 @@ export default function SideBar() {
         ))}
       </div>
       <div className="mt-auto p-4 flex justify-center">
-        <Button className="bg-white text-[#FC9C64] px-10">Deconnexion</Button>
+        <Button className="bg-white text-[#FC9C64] px-10" onClick={logout}>Deconnexion</Button>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { FormulaireApi } from '@/api/formulaire.api';
 
-const fakeData = [
+export const fakeData = [
   {
     id: 1,
     fonction: "Fonction",

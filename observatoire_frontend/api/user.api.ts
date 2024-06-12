@@ -137,6 +137,44 @@ export class UserApi {
             return {ok: false, data: {message}};
         }
     }
+
+    static async getAllUsers(accessToken: string, page: number, sortDirection: string, sortField: string): Promise<{ok: boolean, data: {users?: any[], message?: string}}> {
+        const options = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+        };
+
+        const response = await fetch(`${this.baseUrl}/users?page=${page+1}&size=${10}&${sortField}=${sortDirection}`, options);
+        if(response.ok) {
+            const users = await response.json();
+            return {ok: true, data: {users}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
+
+    static async getUserById(accessToken: string, id: string): Promise<{ok: boolean, data: {user?: any, message?: string}}> {
+        const options = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+        };
+
+        const response = await fetch(`${this.baseUrl}/users/${id}`, options);
+        if(response.ok) {
+            const user = await response.json();
+            return {ok: true, data: {user}}
+        } else {
+            const { message } = await response.json();
+            return {ok: false, data: {message}};
+        }
+    }
 }
 
 

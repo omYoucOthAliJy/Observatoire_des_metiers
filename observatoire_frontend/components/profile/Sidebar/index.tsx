@@ -43,7 +43,7 @@ export default function SideBar() {
       </div>
       <div className="flex flex-col gap-4">
         {menu.map((item) => (
-          <NavItem {...item} />
+          <NavItem {...item} key={item.key}/>
         ))}
       </div>
       <div className="mt-auto p-4 flex justify-center">

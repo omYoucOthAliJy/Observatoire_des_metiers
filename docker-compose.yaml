@@ -2,28 +2,56 @@ version: '3.8'
 services:
   observatoire_frontend:
     build: 
-      context: .
-      dockerfile: ./observatoire_frontend/Dockerfile
-      target: development
+      context: ./observatoire_frontend
+      dockerfile: ./Dockerfile
+      target: production
     container_name: frontend_container
     ports:
       - '3000:3000'
+    depends_on:
+      - observatoire_backend
+    environment:
+      NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4000"
 
   observatoire_backend:
     build: 
-      context: .
-      dockerfile: ./observatoire_backend/Dockerfile
-      target: development
+      context: ./observatoire_backend
+      dockerfile: ./Dockerfile
+      target: production
     container_name: backend_container
     ports:
       - '4000:4000'
     volumes:
-      - ./observatoire_backend:usr/src/app
       - /usr/src/app/node_modules
-    environment:
-      NODE_ENV: development
     depends_on:
       - mysql
+    environment:
+      # Database environment variables
+      DB_TYPE: "mysql"
+      DB_HOST: "mysql_container" # Reference the service name to use Docker's internal networking
+      DB_PORT: "3306"
+      DB_ROOT_USER: "root"
+      DB_ROOT_PASSWORD: "root_password"
+      DB_NAME: "observatoire_db"
+      DB_SYNCHRONIZE: "true"
+
+      # Mailer configuration
+      MAILER_HOST: 
+      MAILER_PORT:
+      MAILER_USER: 
+      MAILER_PASSWORD:
+      MAIL_FROM:
+
+      # Authentication configuration
+      JWT_SECRET:
+      JWT_EXPIRE: 
+
+      # Admin authentication configuration
+      JWT_SECRET_ADMIN: 
+      JWT_EXPIRE_ADMIN: 
+
+      # Front-end origin
+      FRONT_END_ORIGIN: "http://127.0.0.1:3000/"
 
   mysql:
     image: mysql
@@ -35,4 +63,3 @@ services:
     container_name: mysql_container
     ports:
       - '3306:3306'
-    

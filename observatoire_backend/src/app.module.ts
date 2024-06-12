@@ -16,7 +16,6 @@ import { EmploiModule } from './emploi/emploi.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
       isGlobal: true,
       cache: true,
     }),

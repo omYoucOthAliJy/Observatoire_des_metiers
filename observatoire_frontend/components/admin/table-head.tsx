@@ -7,11 +7,12 @@ type TableHeadProps = {
     title: string;
     className: string;
   }>;
+  className?: string
 };
 
-function TableHead({ columns }: TableHeadProps) {
+function TableHead({ columns, className }: TableHeadProps) {
   return (
-    <TableRow>
+    <TableRow className={className}>
       {columns.map((column) => (
         <TableCell
           key={column.title}

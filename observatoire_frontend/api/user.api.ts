@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 
 export class UserApi {
     private static readonly baseUrl = process.env.NEXT_PUBLIC_BASE_URL;

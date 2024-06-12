@@ -1,19 +1,42 @@
-FROM node:alpine as development
+# Étape 1: Construction de l'application
+FROM node:18-alpine AS builder
 
-# Set the working directory in the container
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# Copier package.json et package-lock.json dans le répertoire de travail
 COPY package*.json ./
 
-# Install the project dependencies
+# Installer les dépendances du projet
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Copier le reste du code de l'application dans le répertoire de travail
 COPY . .
 
-# Expose the port the app runs on
+# Construire l'application Next.js pour la production
+RUN npm run build
+
+# Étape 2: Créer l'image de production
+FROM node:18-alpine AS production
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /usr/src/app
+
+# Copier uniquement les fichiers nécessaires pour exécuter l'application
+COPY package*.json ./
+RUN npm install --only=production
+
+# Copier les fichiers construits depuis l'étape de build
+COPY --from=builder /usr/src/app/.next ./.next
+COPY --from=builder /usr/src/app/public ./public
+COPY --from=builder /usr/src/app/next.config.js ./
+
+# Définir les variables d'environnement pour la production
+ENV NODE_ENV="production"
+ENV NEXT_PUBLIC_BASE_URL="http://127.0.0.1:4000"
+
+# Exposer le port sur lequel l'application sera exécutée
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "dev"]
+# Démarrer l'application
+CMD ["npm", "start"]

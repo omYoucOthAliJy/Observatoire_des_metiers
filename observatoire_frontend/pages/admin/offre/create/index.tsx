@@ -49,11 +49,11 @@ function CreateOffre() {
       <div>
         <div className="w-full md:w-4/5 h-fit mx-auto my-10">
           <h1 className="text-[#FC9C64] text-2xl font-bold text-center md:text-start">
-            Votre activité professionelle
+            Creation d&apos;offre d&apos;emploi
           </h1>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="rounded-md grid grid-cols-2 gap-2 mt-4 p-2 md:p-4 shadow-lg border text-black bg-[#F0EEF2] bg-opacity-35"
+            className="rounded-md grid grid-cols-2 gap-2 mt-4 p-2 md:p-4 shadow-lg border text-black bg-[#F0EEF2] bg-opacity-35 w-full"
             noValidate
           >
             <div className="col-span-1">
@@ -121,15 +121,13 @@ function CreateOffre() {
                 {...register("description")}
               />
             </div>
-            <div className="w-full flex justify-end mt-8 px-4 gap-x-4">
-              <Button
-                className="w-1/2 md:w-auto px-8"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                Confirmer
-              </Button>
-            </div>
+            <Button
+              className="px-8 mx-auto col-span-2"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              Confirmer
+            </Button>
           </form>
         </div>
       </div>

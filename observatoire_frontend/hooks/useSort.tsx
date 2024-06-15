@@ -5,7 +5,7 @@ enum SortDirection {
   DESC = "DESC",
 }
 
-export const useSort = (defaultSortField: string) => {
+export const useSort = (defaultSortField: string|null) => {
   const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
   const [sortField, setSortField] = useState(defaultSortField);
 

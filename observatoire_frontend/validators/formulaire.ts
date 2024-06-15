@@ -4,7 +4,7 @@ import * as yup from "yup";
 const strictSchema = yup.object().shape({
     localisation: yup.string().required('Localisation est requise').typeError('Localisation doit être une chaîne de caractères'),
     mois: yup.number().required('Mois est requis').positive('Mois doit être un nombre positif').integer('Mois doit être un nombre entier').typeError('Mois doit être un nombre'),
-    embaucheCadre: yup.boolean().required('Embauche Cadre est requise').typeError('Embauche Cadre doit être un booléen'),
+    embaucheCadre: yup.string().oneOf(['true', 'false'], 'Embauche Cadre doit être "true" ou "false"').required('Embauche Cadre est requise'),
     entreprise: yup.string().required('Entreprise est requise').typeError('Entreprise doit être une chaîne de caractères'),
     nomGroupe: yup.string().required('Nom du Groupe est requis').typeError('Nom du Groupe doit être une chaîne de caractères'),
     secteurActivite: yup.string().required('Secteur d\'Activité est requis').typeError('Secteur d\'Activité doit être une chaîne de caractères'),
@@ -23,7 +23,7 @@ const strictSchema = yup.object().shape({
 const saveSchema = yup.object().shape({
     localisation: yup.string().typeError('Localisation doit être une chaîne de caractères').notRequired(),
     mois: yup.number().nullable().transform((curr, orig) => (orig === "" ? undefined : curr)).integer('Mois doit être un nombre entier').typeError('Mois doit être un nombre'),
-    embaucheCadre: yup.boolean().typeError('Embauche Cadre doit être un booléen').notRequired(),
+    embaucheCadre: yup.string().typeError('Embauche Cadre doit être un booléen').notRequired(),
     entreprise: yup.string().typeError('Entreprise doit être une chaîne de caractères').notRequired(),
     nomGroupe: yup.string().typeError('Nom du Groupe doit être une chaîne de caractères').notRequired(),
     secteurActivite: yup.string().typeError('Secteur d\'Activité doit être une chaîne de caractères').notRequired(),

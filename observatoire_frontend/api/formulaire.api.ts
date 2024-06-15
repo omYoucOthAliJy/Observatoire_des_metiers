@@ -111,7 +111,8 @@ export class FormulaireApi {
         }
     }
 
-    static async getUserFormulaires(accessToken: string, id: string) {
+
+    static async getUserFormulairesAdmin(accessToken: string, id: string){
         const options = {
             method: 'GET',
             headers: { 
@@ -119,7 +120,7 @@ export class FormulaireApi {
                 'Authorization': `Bearer ${accessToken}`,
             }
         };
-        const response = await fetch(`${this.baseUrl}/formulaires/user/id?id=${id}`, options);
+        const response = await fetch(`${this.baseUrl}/formulaires/user/${id}`, options);
         if(response.ok) {
             const formulaires = await response.json();
             return {ok: true, data: {formulaires}}

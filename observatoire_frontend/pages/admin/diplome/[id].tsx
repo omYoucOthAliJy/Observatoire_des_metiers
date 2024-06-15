@@ -1,18 +1,15 @@
-import ListItem from "@/components/acceuil/list-item";
+import ListItem from "@/components/admin/list-item";
 import AdminLayout from "@/components/admin/admin-layout";
-import { fakeData } from "@/pages/acceuil";
 import Image from "next/image";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { UserApi } from "@/api/user.api";
-import { useParams } from "next/navigation";
 import { FormulaireApi } from "@/api/formulaire.api";
 
 function UserDetails() {
   const router = useRouter();
-  const params = useParams()
   const [loading, setLoading] = useState(true);
   const [user, setUsers] = useState<any>({});
   const [formulaires, setFormulaires] = useState<any[]>([]);
@@ -21,13 +18,14 @@ function UserDetails() {
     const currentUser = Cookies.get("currentAdmin");
     if (currentUser) {
       const cookieData = JSON.parse(currentUser as string);
-      UserApi.getUserById(cookieData.token, params?.id as string).then((res) => {
+      const user_id: string = router.query.id as string;
+      UserApi.getUserById(cookieData.token, user_id).then((res) => {
         if (res.ok) {
           const user = res.data.user;
           setUsers(user);
         }
       });
-      FormulaireApi.getUserFormulaires(cookieData.token, params?.id as string).then(res => {
+      FormulaireApi.getUserFormulairesAdmin(cookieData.token, user_id).then(res => {
         if (res.ok) {
           const formulaires = res.data.formulaires
           setFormulaires(formulaires)
@@ -39,16 +37,14 @@ function UserDetails() {
     }
   }, [router]);
 
-  useEffect(() => void console.log(user), [user])
-
   if (loading) {
     return null;
   }
 
   return (
     <AdminLayout>
-      <div className="grid grid-cols-3 gap-2 h-full">
-        <div className="col-span-1 bg-[#F0EEF2] rounded-md p-4 flex flex-col gap-2">
+      <div className="flex flex-row gap-2 h-[800px]">
+        <div className="flex-1 bg-[#F0EEF2] rounded-md p-4 flex flex-col gap-2">
           <div className="flex justify-center items-start">
             <Image
               src="/profile_image.svg"
@@ -81,11 +77,13 @@ function UserDetails() {
             <p>{user.speciality?.title}</p>
           </div>
         </div>
-        <div className="col-span-2 h-full text-white">
+        <div className="flex-1 h-full p-4 pt-0 text-white">
           <h3 className="font-bold text-lg text-[#FC9C64]">Formulaires</h3>
+          <div className="w-full h-full overflow-y-scroll flex flex-col justify-start gap-4">
           {formulaires?.map((item) => (
-            <ListItem readonly key={item.id} item={item} />
+            <ListItem key={item.id} item={item} />
           ))}
+          </div>
         </div>
       </div>
     </AdminLayout>

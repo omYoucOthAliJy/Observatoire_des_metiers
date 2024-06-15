@@ -18,10 +18,11 @@ function CreateOffre() {
 
   useEffect(() => {
     const currentUser = Cookies.get("currentAdmin");
+    const { id } = router.query;
     if (currentUser) {
-      if (params.id) {
+      if (id) {
         const cookieData = JSON.parse(currentUser as string);
-        EmploiApi.getEmploiById(cookieData.token, params.id as string).then(res => setEmploi(res.data.emploi))
+        EmploiApi.getEmploiById(cookieData.token, id as string).then(res => setEmploi(res.data.emploi))
         setLoading(false);
       }
     } else {
@@ -55,7 +56,7 @@ function CreateOffre() {
       <div>
         <div className="w-full md:w-4/5 h-fit mx-auto my-10">
           <h1 className="text-[#FC9C64] text-2xl font-bold text-center md:text-start">
-            Votre activité professionelle
+            Modification d&apos;offre d&apos;emploi
           </h1>
           <form
             onSubmit={handleSubmit(onSubmit)}

@@ -8,8 +8,6 @@ export class GlobalController {
         private readonly globalService:  GlobalService
     ) {}
 
-
-    
     @Get('/questions') 
     async getListOfQuestions():Promise<Question[]> {
         return await this.globalService.getQuestionsList();

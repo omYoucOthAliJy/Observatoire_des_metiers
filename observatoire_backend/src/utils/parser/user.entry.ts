@@ -12,7 +12,8 @@ export class UserEntry {
     gender: Gender;           
     firstName: string;         
     lastName: string;          
-    birthDate: string;           
+    birthDate: string;   
+    date_diplome: string;        
     speciality: string;    
     lastInscription: string;   
     formation: string;
@@ -50,7 +51,8 @@ export async function isUserEntry(obj: any, specialities: Speciality[], formatio
         isValidFormation(obj.formation, formations) && 
         typeof obj.firstName === 'string' &&        
         typeof obj.lastName === 'string' &&          
-        obj.birthDate instanceof Date &&           
+        obj.birthDate instanceof Date &&            
+        obj.date_diplome instanceof Date &&       
         typeof obj.lastInscription === 'string'       
     );
 }

@@ -12,10 +12,6 @@ export class UpdateFormulaireDto {
 
   @IsOptional()
   @IsString()
-  signature?: string;
-
-  @IsOptional()
-  @IsString()
   entreprise?: string;
 
   @IsOptional()

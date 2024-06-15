@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EmploiApi } from "@/api/emploi.api";
-import { useSort } from "../useSort";
+import { useSort } from "../../../hooks/useSort";
 
 const columns = [
   {
@@ -39,7 +39,7 @@ export default function Offre() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [emplois, setEmplois] = useState<any[]>([]);
+  const [emplois, setEmplois] = useState<any>({});
   const { sortDirection } = useSort("createdAt");
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Offre() {
         (res) => {
           if (res.ok) {
             const emplois = res.data.emplois;
-            setEmplois(emplois || []);
+            setEmplois(emplois || {});
           }
         }
       );
@@ -60,11 +60,15 @@ export default function Offre() {
     }
   }, [router, page, sortDirection]);
 
-  const deleteEmploi = async (id) => {
-    const currentUser = Cookies.get("currentAdmin");
-    const cookieData = JSON.parse(currentUser as string);
-    await EmploiApi.deleteEmploi(cookieData.token, id)
-    router.refresh()
+  const deleteEmploi = async (id: number) => {
+
+    const confirmation = confirm("Êtes-vous sûr de vouloir supprimer cet offre d'emploi ?");
+    if (confirmation) {
+      const currentUser = Cookies.get("currentAdmin");
+      const cookieData = JSON.parse(currentUser as string);
+      await EmploiApi.deleteEmploi(cookieData.token, id)
+      router.refresh()
+    }
   }
 
   if (loading) {
@@ -87,12 +91,12 @@ export default function Offre() {
           </div>
           <div className="mt-4">
             <TableHead columns={columns} className="gap-4" />
-            {emplois?.map((emploi: any) => (
+            {emplois?.data?.map((emploi: any) => (
               <TableRow className="items-center gap-4" key={emploi.id}>
                 <TableCell className="col-span-3">{emploi.titre}</TableCell>
                 <TableCell className="col-span-2">{emploi.entreprise}</TableCell>
                 <TableCell className="col-span-4">
-                  {emploi.description}
+                  <p className="truncate">{emploi.description}</p>
                 </TableCell>
                 <TableCell className="col-span-1">
                   <Link
@@ -106,7 +110,7 @@ export default function Offre() {
                   <div className="flex gap-4 items-center justify-end">
                     <div
                       role="button"
-                      onClick={() => router.push("offre/create/" + emploi.id)}
+                      onClick={() => router.push("offre/edit/" + emploi.id)}
                       className="w-6 h-6 flex items-center"
                     >
                       <Image
@@ -134,7 +138,7 @@ export default function Offre() {
             ))}
           </div>
           <div className="flex justify-center">
-            <Pagination count={0} setPage={setPage} />
+            <Pagination count={emplois.count} setPage={setPage} />
           </div>
         </div>
       </div>

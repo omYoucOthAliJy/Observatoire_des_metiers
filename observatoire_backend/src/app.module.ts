@@ -12,6 +12,7 @@ import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { FormulaireModule } from './formulaire/formulaire.module';
 import { EmploiModule } from './emploi/emploi.module';
+import { GlobalModule } from './global/global.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { EmploiModule } from './emploi/emploi.module';
     AdminModule,
     FormulaireModule,
     EmploiModule,
+    GlobalModule
   ],
   controllers: [AppController],
   providers: [AppService],

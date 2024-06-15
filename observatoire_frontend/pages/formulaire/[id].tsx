@@ -43,7 +43,6 @@ export default function FormulaireQuestionnaire() {
     const submitMethod = async (data: any) => {
         const currentUser = Cookies.get("currentUser");
         const cookieData = JSON.parse(currentUser as string);
-
         const payload = {
             status: FormStatus.PENDING,
             temps: data.mois,
@@ -108,8 +107,14 @@ export default function FormulaireQuestionnaire() {
             if (res.ok) {
                 const formulaireData = res.data.formulaire;
                 for (let key of Object.keys(formulaireData)) {
-                    form.setValue(key, formulaireData[key]);
+                    if (key == "embaucheCadre" && formulaireData[key] != null) {
+                        form.setValue("embaucheCadre", formulaireData[key]? "true": "false");
+                    } else {
+                        form.setValue(key, formulaireData[key]);
+                    }
                 }
+
+                
             } else {
                 router.push("/acceuil")
             }

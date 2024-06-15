@@ -1,6 +1,5 @@
 import {
   ArrowDownTrayIcon,
-  CheckIcon,
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/16/solid";

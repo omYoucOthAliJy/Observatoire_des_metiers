@@ -36,7 +36,7 @@ export default function SideBar() {
     router.push("/admin/login")
   }
   return (
-    <div className="w-64 bg-[#FC9C64] flex flex-col">
+    <div className="w-[20%] w-min-64 bg-[#FC9C64] flex flex-col h-screen sticky top-0">
       <div className="p-4 mb-16">
         <Image
           alt="logo"

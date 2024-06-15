@@ -24,9 +24,6 @@ export class Formulaire {
   localisation: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  signature: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
   entreprise: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

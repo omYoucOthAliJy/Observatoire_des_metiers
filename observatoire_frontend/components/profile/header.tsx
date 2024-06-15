@@ -35,7 +35,7 @@ const Header: FC<HeaderProps> = ({ user }) => {
                 {/* Menu icon */}
                 <Image
                     className='h-full sm:hidden cursor-pointer'
-                    src="menu.svg" alt='menu logo' width="40" height="40"
+                    src="../menu.svg" alt='menu logo' width="40" height="40"
                     onClick={() => setShowMenu((lastState) => !lastState)}
                 />
                 {/* Logo */}

@@ -21,14 +21,18 @@ export class EmploiService {
     page: number,
     size: number,
     createdAt: 'ASC' | 'DESC',
-  ): Promise<Emploi[]> {
-    return await this.emploiRepository.find({
+  ): Promise<{data: Emploi[], count: number}> {
+    const offers = await this.emploiRepository.find({
       order: {
         created_at: createdAt,
       },
       skip: (page - 1) * size,
       take: size,
     });
+
+    const count = await this.emploiRepository.count()
+
+    return {data: offers, count: count}
   }
 
   async findOneById(id: number): Promise<Emploi> {

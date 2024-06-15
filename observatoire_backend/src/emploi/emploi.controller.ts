@@ -8,16 +8,19 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { EmploiService } from './emploi.service';
 import { CreateEmploiDto } from './dto/create-emploi-dto';
 import { UpdateEmploiDto } from './dto/update-emploi-dto';
 import { Emploi } from './entity/emploi.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('emploi')
 export class EmploiController {
   constructor(private readonly emploiService: EmploiService) {}
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Post()
   async createEmploi(
     @Body() createEmploiDto: CreateEmploiDto,
@@ -30,7 +33,7 @@ export class EmploiController {
     @Query('page') page: number,
     @Query('size') size: number,
     @Query('createdAt') createdAt: 'ASC' | 'DESC',
-  ): Promise<Emploi[]> {
+  ): Promise<{data: Emploi[], count: number}> {
     if (createdAt !== 'ASC' && createdAt !== 'DESC') {
       throw new BadRequestException(
         'Le paramètre createdAt doit être "ASC" ou "DESC".',
@@ -44,6 +47,7 @@ export class EmploiController {
     return this.emploiService.findOneById(id);
   }
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Put(':id')
   async updateEmploi(
     @Param('id') id: number,
@@ -52,6 +56,7 @@ export class EmploiController {
     return this.emploiService.update(id, updateEmploiDto);
   }
 
+  @UseGuards(AuthGuard('jwt_admin'))
   @Delete(':id')
   async removeEmploi(@Param('id') id: number): Promise<void> {
     return this.emploiService.remove(id);

@@ -3,9 +3,9 @@ import SideBar from '../profile/Sidebar'
 
 function AdminLayout({ children }: PropsWithChildren) {
   return (
-    <div className="min-h-screen bg-white flex" style={{ alignItems: "stretch" }}>
+    <div className="h-[100%] bg-white flex overflow-y-scroll" style={{ alignItems: "stretch" }}>
       <SideBar  />
-      <div className="lg:container text-black p-8 mt-16 flex items-start justify-center mx-auto">
+      <div className="w-full text-black p-8 mt-16 flex items-start justify-center mx-auto h-full">
         <div className="w-full h-full">
           {children}
         </div>

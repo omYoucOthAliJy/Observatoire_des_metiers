@@ -69,7 +69,7 @@ export default function Signup() {
                     {/* Form title */}
                     <h1 className='text-black font-bold text-3xl my-8'>Inscription</h1>
                     {/* Form description */}
-                    <p className='text-[#A7A7A7] text-sm '>
+                    <p className='text-[#A7A7A7] text-sm'>
                         Pour initier le processus, veuillez soumettre votre première demande de dossier à l&apos;Observatoire des métiers de l&apos;Institut Galilée. Veuillez saisir votre adresse mail ENT (mail de l&apos;université).
                     </p>
                     {/* Form */}

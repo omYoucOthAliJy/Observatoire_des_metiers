@@ -5,13 +5,13 @@ services:
       context: ./observatoire_frontend
       dockerfile: ./Dockerfile
       target: production
+      args:
+        - NEXT_PUBLIC_BASE_URL=http://127.0.0.1:4000
     container_name: frontend_container
     ports:
       - '3000:3000'
     depends_on:
       - observatoire_backend
-    environment:
-      NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4000"
 
   observatoire_backend:
     build: 
@@ -37,13 +37,13 @@ services:
 
       # Mailer configuration
       MAILER_HOST: 
-      MAILER_PORT:
-      MAILER_USER: 
-      MAILER_PASSWORD:
-      MAIL_FROM:
+      MAILER_PORT: 
+      MAILER_USER:
+      MAILER_PASSWORD: 
+      MAIL_FROM: 
 
       # Authentication configuration
-      JWT_SECRET:
+      JWT_SECRET: 
       JWT_EXPIRE: 
 
       # Admin authentication configuration

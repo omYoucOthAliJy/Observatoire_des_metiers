@@ -13,6 +13,10 @@ RUN npm install
 # Copier le reste du code de l'application dans le répertoire de travail
 COPY . .
 
+ARG NEXT_PUBLIC_BASE_URL
+
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+
 # Construire l'application Next.js pour la production
 RUN npm run build
 
@@ -33,7 +37,6 @@ COPY --from=builder /usr/src/app/next.config.js ./
 
 # Définir les variables d'environnement pour la production
 ENV NODE_ENV="production"
-ENV NEXT_PUBLIC_BASE_URL="http://127.0.0.1:4000"
 
 # Exposer le port sur lequel l'application sera exécutée
 EXPOSE 3000

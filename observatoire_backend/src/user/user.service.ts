@@ -500,7 +500,6 @@ export class UserService {
         }
       });
     } catch (error) {
-      console.error('Error uploading CSV:', error);
       if (
         error instanceof EntityNotFoundError ||
         error instanceof BadRequestException

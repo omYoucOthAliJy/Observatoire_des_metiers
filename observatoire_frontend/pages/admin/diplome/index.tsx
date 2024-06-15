@@ -11,6 +11,7 @@ import { UserApi } from "@/api/user.api";
 import AdminLayout from "@/components/admin/admin-layout";
 import { useSort } from "../../../hooks/useSort";
 import AjoutUsers from "@/components/admin/ajout-users";
+import {ExclamationCircleIcon} from "@heroicons/react/16/solid";
 
 
 const rechercheCriteria = [
@@ -240,6 +241,12 @@ export default function Diplome() {
     </AdminLayout>
     {showAdd && <div className="absolute bg-black bg-opacity-50 w-screen h-screen top-0 left-0 flex flex-col justify-center items-center" onClick={() => setShowAdd(false)}>
       <AjoutUsers sendFile={sendFile} sendUser={null} />
+    </div>}
+    {error && <div className="absolute bg-black bg-opacity-50 w-screen h-screen top-0 left-0 flex flex-col justify-center items-center" onClick={() => setError(null)}>
+      <div className="bg-red-600 rounded-md w-[50%] p-8 flex flex-col items-center gap-4">
+        <ExclamationCircleIcon className="w-10 h-10"/>
+        <p>{error}</p>
+      </div>
     </div>}
     </>
   );

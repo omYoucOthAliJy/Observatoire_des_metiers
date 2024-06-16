@@ -77,10 +77,11 @@ The provided `docker-compose.yml` file defines three services: `observatoire_fro
 - **context**: The build context for the frontend Docker image.
 - **dockerfile**: The path to the Dockerfile for the frontend.
 - **target**: The build stage to use for production.
+- **args**: Build arguments for the frontend application.
+  - `NEXT_PUBLIC_BASE_URL`: The base URL for the frontend application to reach the rest api.
 - **container_name**: The name of the frontend container.
 - **ports**: Maps port 3000 of the host to port 3000 of the container.
 - **depends_on**: Ensures the backend service is started before the frontend.
-- **environment**: Environment variables used by the frontend application.
 
 #### `observatoire_backend`
 

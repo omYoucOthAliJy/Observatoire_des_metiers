@@ -84,13 +84,15 @@ export default function Diplome() {
       const cookieData = JSON.parse(currentUser as string);
       const dateDiplome = dateDiplomeInputRef.current?.value;
       const specialite = specialiteInputRef.current?.options[specialiteInputRef.current.selectedIndex].label;
+      const criteria = recherchCriteriaInputRef.current?.value;
+      const value = recherchInputRef.current?.value;
       UserApi.getListSpecialities().then((res) => {
         if (res.ok) {
             const specialityOptions = res.data.specialities?.map((speciality) => ({value: speciality.id, label: speciality.title}));
             setSpecialities(specialityOptions || []);
         }
       })
-      UserApi.getAllUsers(cookieData.token, page, sortDirection, sortField, dateDiplome, specialite).then((res) => {
+      UserApi.getAllUsers(cookieData.token, page, sortDirection, sortField, dateDiplome, specialite, criteria, value).then((res) => {
         if (res.ok) {
           const users = res.data.users;
           setUsers(users || []);
@@ -109,8 +111,9 @@ export default function Diplome() {
     const value = recherchInputRef.current?.value;
     const dateDiplome = dateDiplomeInputRef.current?.value;
     const specialite = specialiteInputRef.current?.options[specialiteInputRef.current.selectedIndex].label;
+    setPage(() => 0)
 
-    UserApi.getAllUsers(cookieData.token, page, sortDirection, sortField, dateDiplome, specialite, criteria, value).then((res) => {
+    UserApi.getAllUsers(cookieData.token, 0, sortDirection, sortField, dateDiplome, specialite, criteria, value).then((res) => {
       if (res.ok) {
         const users = res.data.users;
         setUsers(users || []);
